@@ -14,7 +14,7 @@ import com.projeto.backend.exceptions.CustomException;
 import com.projeto.backend.models.Usuario;
 import com.projeto.backend.models.base.Pojo;
 
-public abstract class ServiceGenerico<ENTIDADE extends Pojo<ID>, ID extends Serializable, REPOSITORIO extends JpaRepository<ENTIDADE, ID>> {
+public abstract class ServiceGenerico<ENTIDADE extends Pojo<ID>, ENTIDADEDTO,  ID extends Serializable, REPOSITORIO extends JpaRepository<ENTIDADE, ID>> {
 
 	public abstract REPOSITORIO getRepositorio();
 
@@ -24,7 +24,7 @@ public abstract class ServiceGenerico<ENTIDADE extends Pojo<ID>, ID extends Seri
 	}
 
 	@Transactional(readOnly = true)
-	public List<ENTIDADE> consultarTodos() throws CustomException {
+	protected List<ENTIDADE> consultarTodos() throws CustomException {
 		return null;
 	}
 
@@ -91,7 +91,7 @@ public abstract class ServiceGenerico<ENTIDADE extends Pojo<ID>, ID extends Seri
 	
 	// Método principal pra salvar inclusão, alteração ou exclusão lógica
 	@Transactional(rollbackFor = Exception.class)
-	private ENTIDADE salvarEntidade(ENTIDADE entidade) throws CustomException {
+	protected ENTIDADE salvarEntidade(ENTIDADE entidade) throws CustomException {
 		entidade.setDataAlteracao(LocalDateTime.now());		
 		
 		ENTIDADE pojoBanco = null;
@@ -104,30 +104,32 @@ public abstract class ServiceGenerico<ENTIDADE extends Pojo<ID>, ID extends Seri
 		return pojoBanco;
 	}
 		
-	protected void resolverPreDependencias(ENTIDADE entidade) throws CustomException {
-	}
+	protected void resolverPreDependencias(ENTIDADE entidade) throws CustomException {}
 
-	public void resolverPosDependencias(ENTIDADE entidade) throws CustomException {
-	}
+	protected void resolverPosDependencias(ENTIDADE entidade) throws CustomException {}
 
-	public void resolverPreExclusao(ENTIDADE entidade) throws CustomException {
-	}
+	protected void resolverPreExclusao(ENTIDADE entidade) throws CustomException {}
 
-	public void resolverPosExclusao(ENTIDADE entidade) throws CustomException {
-	}
+	protected void resolverPosExclusao(ENTIDADE entidade) throws CustomException {}
 
-	public void validarAlteracao(ENTIDADE entidade) throws CustomException {
-	}
+	protected void validarAlteracao(ENTIDADE entidade) throws CustomException {}
 
-	public void validarExclusao(ENTIDADE entidade) throws CustomException {
-	}
+	protected void validarExclusao(ENTIDADE entidade) throws CustomException {}
 
-	public void validarInclusao(ENTIDADE entidade) throws CustomException {
-	}
+	protected void validarInclusao(ENTIDADE entidade) throws CustomException {}
 
-	public void validarUnicidade(ENTIDADE entidade) throws CustomException {
-	}
-		
+	protected void validarUnicidade(ENTIDADE entidade) throws CustomException {}
+	
+	// Utilizado para conversão do input em model e do model em response
+	public abstract ENTIDADE converterDTOParaEntidade(ENTIDADEDTO entidadeDTO);
+
+	public abstract ENTIDADEDTO converterEntidadeParaDTO(ENTIDADE entidade);
+
+	protected List<ENTIDADE> converterListaDTOParaListaEntidade(List<ENTIDADEDTO> listaEntidadesDTO) throws CustomException { return null; }
+
+	protected List<ENTIDADEDTO> converterListaEntidadeParaListaDTO(List<ENTIDADE> listaEntidades) throws CustomException { return null; }
+	// --
+			
 	private boolean isUsuarioValido(Usuario usuario) {
 		if (usuario != null && usuario.getUsuario().getId() != null) {
 			return true;

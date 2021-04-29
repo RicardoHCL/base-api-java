@@ -36,6 +36,6 @@ public class Usuario extends Pojo<Long> {
 	private String email;
 	
 	@Column(name = "senha", nullable = false)
-	private String senha;
+	private String senha;	
 
 }
