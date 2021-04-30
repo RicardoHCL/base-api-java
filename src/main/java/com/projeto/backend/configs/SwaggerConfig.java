@@ -1,4 +1,4 @@
-package com.projeto.backend.config;
+package com.projeto.backend.configs;
 
 import java.util.ArrayList;
 import java.util.List;

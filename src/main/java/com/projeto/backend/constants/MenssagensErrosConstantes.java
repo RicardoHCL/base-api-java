@@ -9,7 +9,8 @@ public class MenssagensErrosConstantes {
 	public static final String CAMPO_EMAIL_OBRIGATORIO = "O campo email é obritório.";
 	public static final String CAMPO_SENHA_OBRIGATORIO = "O campo senha é obritório.";
 	public static final String CAMPO_SENHA_E_CONFIRMACAO_SENHA_OBRIGATORIO = "Os campos senha e confirmacao de senha são obritórios.";
-
+	public static final String EMAIL_INVALIDO = "Email inválido";
+	
 	// Service Generico
 	public static final String ENTIDADE_JA_ALTERADA = "Entidade Já Foi Alterada.";
 

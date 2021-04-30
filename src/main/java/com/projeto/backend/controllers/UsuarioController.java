@@ -19,7 +19,7 @@ import io.swagger.annotations.Api;
 @CrossOrigin
 @RestController
 @Api(value = "Usuarios", description = "Endpoint dos usuarios", tags = "Usuarios")
-@RequestMapping("/usuarios")
+@RequestMapping("/api/usuarios")
 public class UsuarioController extends ControllerGenerico<UsuarioDTO, Long>{
 	
 	@Autowired
