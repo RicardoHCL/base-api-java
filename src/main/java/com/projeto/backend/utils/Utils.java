@@ -5,7 +5,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 public class Utils {
 
 	public static String gerarHashSenha(final String senha) {
-		BCryptPasswordEncoder bCrypt = new BCryptPasswordEncoder(16);
+		BCryptPasswordEncoder bCrypt = new BCryptPasswordEncoder();
 		return bCrypt.encode(senha);
 	}
 

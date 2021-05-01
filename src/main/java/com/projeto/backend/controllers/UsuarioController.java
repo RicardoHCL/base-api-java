@@ -5,7 +5,6 @@ import java.util.List;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,10 +16,9 @@ import com.projeto.backend.services.UsuarioService;
 
 import io.swagger.annotations.Api;
 
-@CrossOrigin
 @RestController
 @Api(value = "Usuarios", description = "Endpoint dos usuarios", tags = "Usuarios")
-@RequestMapping("/acesso/usuarios")
+@RequestMapping("/api/usuarios")
 public class UsuarioController extends ControllerGenerico<UsuarioDTO, Long>{
 	
 	@Autowired

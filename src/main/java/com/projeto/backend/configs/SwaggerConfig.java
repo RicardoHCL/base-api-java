@@ -38,7 +38,7 @@ public class SwaggerConfig {
 			private static final long serialVersionUID = 1L;
 
 			{
-				add(new ResponseMessageBuilder().code(500).message("XX").build());
+				add(new ResponseMessageBuilder().code(500).message("XX").build()); //TODO IMPLEMENTAR MENSAGENS
 				add(new ResponseMessageBuilder().code(400).message("XX").build());
 			}
 		};

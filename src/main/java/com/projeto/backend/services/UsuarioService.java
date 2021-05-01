@@ -51,6 +51,15 @@ public class UsuarioService extends ServiceGenerico<Usuario, UsuarioDTO, Long, U
 		throw new EntityNotFoundException(ExceptionsConstantes.USUARIO_NAO_ENCONTRADO);
 
 	}
+	
+	public Usuario consultarPorEmail(String email) {
+		Optional<Usuario> usuario = repository.findDistinctByEmailAndAtivo(email, true);
+		if (usuario.isPresent()) {
+			return usuario.get();
+		}
+
+		throw new EntityNotFoundException(ExceptionsConstantes.EMAIL_INVALIDO);
+	}
 
 	public UsuarioDTO cadastro(UsuarioDTO usuarioDTO) {
 		Usuario usuario = converterDTOParaEntidade(usuarioDTO);

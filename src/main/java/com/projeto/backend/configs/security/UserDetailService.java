@@ -1,32 +1,29 @@
 package com.projeto.backend.configs.security;
 
-import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import com.projeto.backend.constants.ExceptionsConstantes;
 import com.projeto.backend.models.Usuario;
-import com.projeto.backend.repositories.UsuarioRepository;
+import com.projeto.backend.services.UsuarioService;
 
 @Service
 public class UserDetailService implements UserDetailsService {
 
 	@Autowired
-	private UsuarioRepository repository;
-	
-	public UserDetailService(UsuarioRepository repository) {
-		this.repository = repository;
+	private UsuarioService service;
+
+	public UserDetailService(UsuarioService service) {
+		this.service = service;
 	}
-	
+
 	@Override
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-		Optional<Usuario> usuario = repository.findDistinctByEmailAndAtivo(email, true);
-		usuario.orElseThrow(() -> new UsernameNotFoundException(ExceptionsConstantes.EMAIL_INVALIDO));
-		return new UserDetail(usuario.get());
+		Usuario usuario = service.consultarPorEmail(email);
+		return new UserDetail(usuario);
+
 	}
 
 }

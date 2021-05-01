@@ -9,5 +9,7 @@ public class ExceptionsConstantes {
 	public static final String EMAIL_INVALIDO = "Email inválido";
 	
 	public static final String USUARIO_NAO_ENCONTRADO = "Usuário não encontrado";
+	
+	public static final String USUARIO_OU_SENHA_INCORRETO = "Usuário ou senha incorreto";
 
 }
