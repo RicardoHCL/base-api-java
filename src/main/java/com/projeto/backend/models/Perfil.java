@@ -22,31 +22,32 @@ import lombok.Setter;
 @Entity
 @Audited
 @Table(name = "perfis")
-@Getter
-@Setter
+@Getter @Setter
 public class Perfil extends Pojo<Long> implements GrantedAuthority {
 
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_permissao")
-	@SequenceGenerator(name = "seq_permissao", sequenceName = "seq_permissao", allocationSize = 1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_pefil")
+	@SequenceGenerator(name = "seq_pefil", sequenceName = "seq_pefil", allocationSize = 1)
 	@Column(name = "id")
 	private Long id;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = "nome")
+	@Column(name = "nome", unique = true)
 	private PerfilEnum nome;
 
+	/**
+	 * Construtores
+	 */
 	public Perfil() {
-
 	}
 
 	public Perfil(Long id, PerfilEnum nome) {
 		this.id = id;
 		this.nome = nome;
 	}
-	
+
 	public Perfil(PerfilEnum nome) {
 		this.nome = nome;
 	}

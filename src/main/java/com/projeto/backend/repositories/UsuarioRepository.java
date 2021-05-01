@@ -10,7 +10,6 @@ import com.projeto.backend.models.Usuario;
 public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
 
 	Optional<Usuario> findDistinctByEmailAndAtivo(String email, boolean ativo);
-	Long countByEmailAndAtivo(String email, boolean ativo);
 	Long countByEmailAndAtivoAndIdNot(String email, boolean ativo, Long id);
 	List<Usuario> findByAtivo(boolean ativo);
 }

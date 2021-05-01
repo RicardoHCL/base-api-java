@@ -20,7 +20,7 @@ public abstract class ControllerGenerico<ENTIDADEDTO, ID extends Serializable> {
 	public abstract ENTIDADEDTO consultar(ID id);
 
 	@DeleteMapping("/{id}")
-	public abstract void deletar(ID id);
+	public abstract void excluir(ID id);
 
 	@GetMapping
 	public abstract List<ENTIDADEDTO> listar();

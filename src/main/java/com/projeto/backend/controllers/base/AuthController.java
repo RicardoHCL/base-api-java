@@ -35,6 +35,7 @@ public class AuthController {
 	private UsuarioRepository usuarioRepository;
 	
 	
+	@SuppressWarnings("rawtypes")
 	public ResponseEntity criarSessaoLogin(@RequestBody Usuario usuario) {
 		try {
 			

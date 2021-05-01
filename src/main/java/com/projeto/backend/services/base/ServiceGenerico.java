@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.projeto.backend.constants.MenssagensErrosConstantes;
+import com.projeto.backend.constants.ExceptionsConstantes;
 import com.projeto.backend.exceptions.CustomException;
 import com.projeto.backend.models.Usuario;
 import com.projeto.backend.models.base.Pojo;
@@ -24,7 +24,7 @@ public abstract class ServiceGenerico<ENTIDADE extends Pojo<ID>, ENTIDADEDTO,  I
 	}
 
 	@Transactional(readOnly = true)
-	protected List<ENTIDADE> consultarTodos() throws CustomException {
+	protected List<ENTIDADEDTO> consultarTodos() throws CustomException {
 		return null;
 	}
 
@@ -99,7 +99,7 @@ public abstract class ServiceGenerico<ENTIDADE extends Pojo<ID>, ENTIDADEDTO,  I
 			pojoBanco = this.getRepositorio().save(entidade);
 		} catch (ObjectOptimisticLockingFailureException e) {
 			e.printStackTrace();
-			throw new CustomException(MenssagensErrosConstantes.ENTIDADE_JA_ALTERADA);
+			throw new CustomException(ExceptionsConstantes.ENTIDADE_JA_ALTERADA);
 		}
 		return pojoBanco;
 	}

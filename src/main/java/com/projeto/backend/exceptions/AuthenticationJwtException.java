@@ -10,7 +10,7 @@ public class AuthenticationJwtException extends JwtException{
 
 private static final long serialVersionUID = 1L;
 	
-	public AuthenticationJwtException(String mensagem) {
-		super(mensagem);
+	public AuthenticationJwtException(String menssagem) {
+		super(menssagem);
 	}
 }

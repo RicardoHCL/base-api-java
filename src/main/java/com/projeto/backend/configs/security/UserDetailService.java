@@ -8,7 +8,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import com.projeto.backend.constants.MenssagensErrosConstantes;
+import com.projeto.backend.constants.ExceptionsConstantes;
 import com.projeto.backend.models.Usuario;
 import com.projeto.backend.repositories.UsuarioRepository;
 
@@ -25,7 +25,7 @@ public class UserDetailService implements UserDetailsService {
 	@Override
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 		Optional<Usuario> usuario = repository.findDistinctByEmailAndAtivo(email, true);
-		usuario.orElseThrow(() -> new UsernameNotFoundException(MenssagensErrosConstantes.EMAIL_INVALIDO));
+		usuario.orElseThrow(() -> new UsernameNotFoundException(ExceptionsConstantes.EMAIL_INVALIDO));
 		return new UserDetail(usuario.get());
 	}
 
