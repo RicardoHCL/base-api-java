@@ -10,7 +10,6 @@ import lombok.Setter;
 public class UserDetail extends User {
 
 	private static final long serialVersionUID = 1L;
-
 	
 	private Usuario usuario;
 	

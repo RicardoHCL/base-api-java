@@ -57,8 +57,6 @@ public class ExceptionMessageCustom extends ResponseEntityExceptionHandler {
 				ex.getMessage(), request.getDescription(false));
 		return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
 	}
-
-	
 	
 	/**
 	 * Metodos Auxiliares

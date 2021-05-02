@@ -1,10 +1,10 @@
-package com.projeto.backend;
+package br.com.api;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class BackendApplicationTests {
+class StartApplicationTests {
 
 	@Test
 	void contextLoads() {

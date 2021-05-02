@@ -13,6 +13,11 @@ public class Utils {
 		BCryptPasswordEncoder bCrypt = new BCryptPasswordEncoder();
 		return bCrypt.encode(senha);
 	}
+	
+	public static boolean isSenhasIdenticas(String senha, String hashSenha) {
+		BCryptPasswordEncoder bCrypt = new BCryptPasswordEncoder();
+		return bCrypt.matches(senha, hashSenha);
+	}
 
 	public static Usuario getUsuarioLogado() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

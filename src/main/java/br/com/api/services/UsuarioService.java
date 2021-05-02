@@ -21,6 +21,7 @@ import br.com.api.models.Usuario;
 import br.com.api.repositories.UsuarioRepository;
 import br.com.api.services.base.ServiceGenerico;
 import br.com.api.utils.Utils;
+import br.com.api.utils.ValidacaoUtils;
 
 @Service
 public class UsuarioService extends ServiceGenerico<Usuario, UsuarioDTO, Long, UsuarioRepository> {
@@ -36,6 +37,19 @@ public class UsuarioService extends ServiceGenerico<Usuario, UsuarioDTO, Long, U
 		return repository;
 	}
 
+	public UsuarioDTO criarUsuario(UsuarioDTO usuarioDTO) {
+		Usuario usuario = converterDTOParaEntidade(usuarioDTO);
+		usuario = this.salvar(usuario, null);
+		return converterEntidadeParaDTO(usuario);
+	}
+
+	public UsuarioDTO salvarUsuario(UsuarioDTO usuarioDTO) {
+		Usuario usuario = converterDTOParaEntidade(usuarioDTO);
+		usuario = this.validarCamposAlterados(usuario);
+		usuario = this.salvar(usuario, Utils.getUsuarioLogado());
+		return converterEntidadeParaDTO(usuario);
+	}
+
 	@Override
 	public List<UsuarioDTO> consultarTodos() {
 		return this.converterListaEntidadeParaListaDTO(this.repository.findByAtivo(true));
@@ -49,22 +63,15 @@ public class UsuarioService extends ServiceGenerico<Usuario, UsuarioDTO, Long, U
 		}
 
 		throw new EntityNotFoundException(ExceptionsConstantes.USUARIO_NAO_ENCONTRADO);
-
 	}
-	
-	public Usuario consultarPorEmail(String email) {
-		Optional<Usuario> usuario = repository.findDistinctByEmailAndAtivo(email, true);
+
+	public Usuario consultarPorLogin(String login) {
+		Optional<Usuario> usuario = repository.findDistinctByLoginAndAtivo(login, true);
 		if (usuario.isPresent()) {
 			return usuario.get();
 		}
 
 		throw new EntityNotFoundException(ExceptionsConstantes.EMAIL_INVALIDO);
-	}
-
-	public UsuarioDTO cadastro(UsuarioDTO usuarioDTO) {
-		Usuario usuario = converterDTOParaEntidade(usuarioDTO);
-		usuario = this.salvar(usuario, null);
-		return converterEntidadeParaDTO(usuario);
 	}
 
 	@Override
@@ -73,7 +80,6 @@ public class UsuarioService extends ServiceGenerico<Usuario, UsuarioDTO, Long, U
 	}
 
 	private void vincularPerfisAoUsuario(Usuario usuario) {
-
 		// Em caso de cadastro de usuario, o mesmo inicia com perfil de usuario
 		if (usuario.getListaPerfis() == null || usuario.getListaPerfis().isEmpty()) {
 			List<Perfil> perfis = new ArrayList<>();
@@ -98,25 +104,78 @@ public class UsuarioService extends ServiceGenerico<Usuario, UsuarioDTO, Long, U
 		if (!entidade.getSenha().equals(entidade.getConfirmacaoSenha())) {
 			throw new ValidationException(ValidacaoConstantes.SENHA_E_CONFIRMACAO_SENHA_DIFERENTES);
 		}
-		
+
 		String hashSenha = Utils.gerarHashSenha(entidade.getSenha());
 		entidade.setSenha(hashSenha);
 	}
 
 	@Override
+	protected Usuario validarCamposAlterados(Usuario entidade) {
+
+		Optional<Usuario> usuarioDesatualizado = this.consultarPorId(entidade.getId());
+		usuarioDesatualizado
+				.orElseThrow(() -> new EntityNotFoundException(ExceptionsConstantes.USUARIO_NAO_ENCONTRADO));
+
+		Usuario usuarioAtualizado = usuarioDesatualizado.get();
+
+		if (entidade.getNome() != null) {
+			if (!ValidacaoUtils.isCampoStringValido(entidade.getNome())) {
+				throw new ValidationException(ValidacaoConstantes.NOME_INVALIDO);
+			}
+
+			usuarioAtualizado.setNome(entidade.getNome());
+		}
+
+		if (entidade.getEmail() != null) {
+			if (entidade.getEmail().isBlank() || !ValidacaoUtils.isEmailValido(entidade.getEmail())) {
+				throw new ValidationException(ValidacaoConstantes.EMAIL_INVALIDO);
+			}
+			usuarioAtualizado.setEmail(entidade.getEmail());
+		}
+
+		if (entidade.getNovaSenha() != null) {
+			this.validarTrocarSenha(entidade, usuarioAtualizado.getSenha());
+			usuarioAtualizado.setSenha(entidade.getSenha());
+		}
+
+		return usuarioAtualizado;
+	}
+
+	@Override
 	protected void validarAlteracao(Usuario entidade) throws CustomException {
-		// TODO fazer as validações de alteracao
 		this.validarUnicidade(entidade);
+	}
+
+	private void validarTrocarSenha(Usuario usuario, String hashSenhaAtual) {
+
+		if (!Utils.isSenhasIdenticas(usuario.getSenha(), hashSenhaAtual)) {
+			throw new ValidationException(ValidacaoConstantes.SENHA_INCORRETA);
+		}
+
+		if (!usuario.getNovaSenha().equals(usuario.getConfirmacaoSenha())) {
+			throw new ValidationException(ValidacaoConstantes.SENHA_E_CONFIRMACAO_SENHA_DIFERENTES);
+		}
+
+		String hashNovaSenha = Utils.gerarHashSenha(usuario.getNovaSenha());
+
+		usuario.setSenha(hashNovaSenha);
 	}
 
 	@Override
 	protected void validarUnicidade(Usuario entidade) throws CustomException {
 		Long idUsuario = entidade.getId() == null ? 0l : entidade.getId();
-		Long count = repository.countByEmailAndAtivoAndIdNot(entidade.getEmail(), true, idUsuario);
+		Long count = repository.countByEmailAndIdNot(entidade.getEmail(), idUsuario);
 
 		if (count > 0l) {
 			throw new CustomException(ExceptionsConstantes.EMAIL_JA_CADASTRADO);
 		}
+		
+		count = repository.countByLoginAndIdNot(entidade.getLogin(), idUsuario);
+
+		if (count > 0l) {
+			throw new CustomException(ExceptionsConstantes.LOGIN_JA_CADASTRADO);
+		}
+		
 	}
 
 	@Override
@@ -133,5 +192,5 @@ public class UsuarioService extends ServiceGenerico<Usuario, UsuarioDTO, Long, U
 	protected List<UsuarioDTO> converterListaEntidadeParaListaDTO(List<Usuario> listaEntidades) throws CustomException {
 		return DozerConverter.converterListaObjetos(listaEntidades, UsuarioDTO.class);
 	}
-	
+
 }

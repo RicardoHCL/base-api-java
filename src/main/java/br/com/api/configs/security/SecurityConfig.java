@@ -3,6 +3,7 @@ package br.com.api.configs.security;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -24,8 +25,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		.csrf().disable()
 		.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
 		.authorizeRequests().antMatchers("/acesso/**", "/api-docs/**", "swagger-ui.html**").permitAll()
-		.antMatchers("/api/**").authenticated()
-		.antMatchers("/config/**").denyAll()
+		.antMatchers(HttpMethod.POST,"/api/usuarios").permitAll()
+		.anyRequest().authenticated()		
 		.and().apply(new JwtConfigurer(this.tokenProvider));
 	}
 	

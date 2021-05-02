@@ -44,7 +44,7 @@ public class JwtTokenProvider {
 	}
 
 	public String criarToken(Usuario usuario) {		
-		Claims claims = Jwts.claims().setSubject(usuario.getEmail());
+		Claims claims = Jwts.claims().setSubject(usuario.getLogin());
 		claims.put("roles", getPerfis(usuario.getListaPerfis()));
 		
 		LocalDateTime horaAtual = LocalDateTime.now();
@@ -58,7 +58,7 @@ public class JwtTokenProvider {
 	}
 	
 	public Authentication getAuthentication(String token) {
-		UserDetails user = this.service.loadUserByUsername(getEmailUsuario(token));
+		UserDetails user = this.service.loadUserByUsername(getLoginUsuario(token));
 		return new UsernamePasswordAuthenticationToken(user, "", user.getAuthorities());
 	}
 	
@@ -86,9 +86,8 @@ public class JwtTokenProvider {
 		}
 	}
 	
-	
 	// Recuperar o email apartir do token
-	private String getEmailUsuario(String token) {
+	private String getLoginUsuario(String token) {
 		return Jwts.parser().setSigningKey(chave).parseClaimsJws(token).getBody().getSubject();
 	}
 
