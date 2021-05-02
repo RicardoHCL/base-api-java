@@ -25,13 +25,14 @@ public class UsuarioController extends ControllerGenerico<UsuarioDTO, Long>{
 	private UsuarioService service;
 
 	@Override
-	public UsuarioDTO atualizar(@RequestBody UsuarioDTO body) {
-		return null;
+	public UsuarioDTO atualizar(@PathVariable Long id, @RequestBody UsuarioDTO usuarioDTO) {
+		usuarioDTO.setId(id);
+		return service.salvarUsuario(usuarioDTO);
 	}
 
 	@Override
-	public UsuarioDTO cadastrar(@Valid @RequestBody UsuarioDTO body) {		
-		return service.cadastro(body);
+	public UsuarioDTO cadastrar(@Valid @RequestBody UsuarioDTO usuarioDTO) {		
+		return service.criarUsuario(usuarioDTO);
 	}
 
 	@Override
@@ -41,7 +42,7 @@ public class UsuarioController extends ControllerGenerico<UsuarioDTO, Long>{
 
 	@Override
 	public void excluir(@PathVariable Long id) {
-		service.excluir(id, null);
+		service.excluir(id, Utils.getUsuarioLogado());
 	}
 
 	@Override

@@ -20,8 +20,8 @@ public class UserDetailService implements UserDetailsService {
 	}
 
 	@Override
-	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-		Usuario usuario = service.consultarPorEmail(email);
+	public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
+		Usuario usuario = service.consultarPorLogin(login);
 		return new UserDetail(usuario);
 
 	}

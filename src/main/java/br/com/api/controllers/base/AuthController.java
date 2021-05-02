@@ -5,8 +5,6 @@ import static org.springframework.http.ResponseEntity.ok;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.validation.Valid;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -41,26 +39,19 @@ public class AuthController {
 	@SuppressWarnings("rawtypes")
 	public ResponseEntity criarSessaoLogin(@RequestBody UsuarioDTO usuarioDTO) {
 		try {
-
 			authManager.authenticate(
-					new UsernamePasswordAuthenticationToken(usuarioDTO.getEmail(), usuarioDTO.getSenha()));
+					new UsernamePasswordAuthenticationToken(usuarioDTO.getLogin(), usuarioDTO.getSenha()));
 
-			Usuario usuario = usuarioService.consultarPorEmail(usuarioDTO.getEmail());
+			Usuario usuario = usuarioService.consultarPorLogin(usuarioDTO.getLogin());
 			String token = tokenProvider.criarToken(usuario);
 
 			Map<Object, Object> response = new HashMap<>();
-			response.put("email", usuario.getEmail());
+			response.put("login", usuario.getLogin());
 			response.put("token", token);
 			return ok(response);
 
 		} catch (AuthenticationException ex) {
 			throw new BadCredentialsException(ExceptionsConstantes.USUARIO_OU_SENHA_INCORRETO);
 		}
-
-	}
-	
-	@PostMapping("/novo-usuario")
-	public UsuarioDTO cadastrar(@Valid @RequestBody UsuarioDTO usuario) {		
-		return usuarioService.cadastro(usuario);
 	}
 }

@@ -15,7 +15,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Getter @Setter
-@JsonPropertyOrder({"id", "nome", "email"})
+@JsonPropertyOrder({"id", "nome", "login", "email"})
 @JsonIgnoreProperties(value = {"senha", "confirmacaoSenha", "novaSenha" }, allowSetters = true )
 public class UsuarioDTO implements Serializable {	
 		
@@ -23,10 +23,15 @@ public class UsuarioDTO implements Serializable {
 	
 	private Long id;
 	
-	@NotNull(message = ValidacaoConstantes.EMAIL_OBRIGATORIO)
-	@NotEmpty(message = ValidacaoConstantes.EMAIL_OBRIGATORIO)
-	@Size(min = 3, max = 20, message = "O nome não pode ser menor que 3")
+	@NotNull(message = ValidacaoConstantes.NOME_OBRIGATORIO)
+	@NotEmpty(message = ValidacaoConstantes.NOME_OBRIGATORIO)
+	@Size(min = 3, max = 20, message = ValidacaoConstantes.NOME_INVALIDO)
 	private String nome;	
+	
+	@NotNull(message = ValidacaoConstantes.LOGIN_OBRIGATORIO)
+	@NotEmpty(message = ValidacaoConstantes.LOGIN_OBRIGATORIO)
+	@Size(min = 5, max = 10, message = ValidacaoConstantes.LOGIN_INVALIDO)
+	private String login;	
 	
 	@NotNull(message = ValidacaoConstantes.EMAIL_OBRIGATORIO)
 	@NotEmpty(message = ValidacaoConstantes.EMAIL_OBRIGATORIO)

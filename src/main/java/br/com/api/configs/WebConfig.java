@@ -7,7 +7,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 	
-	
 	//Liberar o CORS Origin para todos os endpoints
 	public void autorizarCors(CorsRegistry registry) {
 		registry.addMapping("/**")

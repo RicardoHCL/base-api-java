@@ -38,6 +38,9 @@ public class Usuario extends Pojo<Long> {
 	@Column(name = "nome", nullable = false)
 	private String nome;
 
+	@Column(name = "login", nullable = false, unique = true)
+	private String login;
+	
 	@Column(name = "email", nullable = false, unique = true)
 	private String email;
 

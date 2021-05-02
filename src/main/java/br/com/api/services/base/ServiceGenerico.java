@@ -5,6 +5,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import javax.persistence.EntityNotFoundException;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,6 +15,7 @@ import br.com.api.constants.ExceptionsConstantes;
 import br.com.api.exceptions.CustomException;
 import br.com.api.models.Usuario;
 import br.com.api.models.base.Pojo;
+import br.com.api.utils.ValidacaoUtils;
 
 public abstract class ServiceGenerico<ENTIDADE extends Pojo<ID>, ENTIDADEDTO,  ID extends Serializable, REPOSITORIO extends JpaRepository<ENTIDADE, ID>> {
 
@@ -32,7 +35,7 @@ public abstract class ServiceGenerico<ENTIDADE extends Pojo<ID>, ENTIDADEDTO,  I
 	@Transactional(rollbackFor = Exception.class)
 	public void deletar(ID id, Usuario usuario) throws CustomException {
 		ENTIDADE entidade = this.consultarPorId(id).get();
-		entidade.setUsuario(isUsuarioValido(usuario) ? usuario : null);
+		entidade.setUsuario(ValidacaoUtils.isUsuarioValido(usuario) ? usuario : null);
 		this.validarExclusao(entidade);
 		this.resolverPreExclusao(entidade);
 		this.getRepositorio().deleteById(entidade.getId());
@@ -48,7 +51,7 @@ public abstract class ServiceGenerico<ENTIDADE extends Pojo<ID>, ENTIDADEDTO,  I
 	@Transactional(rollbackFor = Exception.class)
 	public void excluir(ID id, Usuario usuario) throws CustomException {
 		ENTIDADE entidade = this.consultarPorId(id).get();
-		entidade.setUsuario(isUsuarioValido(usuario) ? usuario : null);
+		entidade.setUsuario(ValidacaoUtils.isUsuarioValido(usuario) ? usuario : null);
 		this.validarExclusao(entidade);
 		this.resolverPreExclusao(entidade);
 		entidade.setAtivo(false);
@@ -61,7 +64,7 @@ public abstract class ServiceGenerico<ENTIDADE extends Pojo<ID>, ENTIDADEDTO,  I
 	@Transactional(rollbackFor = Exception.class)
 	public void excluirSemValidacao(ID id, Usuario usuario) throws CustomException { 
 		ENTIDADE entidade = this.consultarPorId(id).get();
-		entidade.setUsuario(isUsuarioValido(usuario) ? usuario : null);
+		entidade.setUsuario(ValidacaoUtils.isUsuarioValido(usuario) ? usuario : null);
 		entidade.setAtivo(false);
 		entidade.setDataExclusao(LocalDateTime.now());
 		
@@ -71,13 +74,17 @@ public abstract class ServiceGenerico<ENTIDADE extends Pojo<ID>, ENTIDADEDTO,  I
 	// Incluir um novo registro ou Alterar um existente
 	@Transactional(rollbackFor = Exception.class)
 	public ENTIDADE salvar(ENTIDADE entidade, Usuario usuario) throws CustomException {
-		entidade.setUsuario(isUsuarioValido(usuario) ? usuario : null);
+		entidade.setUsuario(ValidacaoUtils.isUsuarioValido(usuario) ? usuario : null);
 		if(entidade.getId() == null) {
 			this.validarInclusao(entidade);
 			entidade.setDataInclusao(LocalDateTime.now());
 		}else{
 			this.validarAlteracao(entidade);
-			entidade.setDataInclusao(this.consultarPorId(entidade.getId()).get().getDataInclusao());
+			Optional<ENTIDADE> entidadeOld = this.consultarPorId(entidade.getId());
+			
+			entidadeOld.orElseThrow(() -> new EntityNotFoundException(ExceptionsConstantes.ENTIDADE_NAO_ENCONTRADA));
+			
+			entidade.setDataInclusao(entidadeOld.get().getDataInclusao());
 		}
 		this.validarUnicidade(entidade);
 		this.resolverPreDependencias(entidade);		
@@ -113,6 +120,8 @@ public abstract class ServiceGenerico<ENTIDADE extends Pojo<ID>, ENTIDADEDTO,  I
 	protected void resolverPosExclusao(ENTIDADE entidade) throws CustomException {}
 
 	protected void validarAlteracao(ENTIDADE entidade) throws CustomException {}
+	
+	protected ENTIDADE validarCamposAlterados(ENTIDADE entidade) throws CustomException { return null; }
 
 	protected void validarExclusao(ENTIDADE entidade) throws CustomException {}
 
@@ -129,13 +138,5 @@ public abstract class ServiceGenerico<ENTIDADE extends Pojo<ID>, ENTIDADEDTO,  I
 
 	protected List<ENTIDADEDTO> converterListaEntidadeParaListaDTO(List<ENTIDADE> listaEntidades) throws CustomException { return null; }
 	// --
-			
-	private boolean isUsuarioValido(Usuario usuario) {
-		if (usuario != null && usuario.getUsuario().getId() != null) {
-			return true;
-		}
-		return false;
-	}
-
 }
 

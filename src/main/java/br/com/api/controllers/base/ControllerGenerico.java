@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 public abstract class ControllerGenerico<ENTIDADEDTO, ID extends Serializable> {
 
 	@PutMapping("/{id}")
-	public abstract ENTIDADEDTO atualizar(ENTIDADEDTO body);
+	public abstract ENTIDADEDTO atualizar(ID id, ENTIDADEDTO body);
 
 	@PostMapping
 	public abstract ENTIDADEDTO cadastrar(ENTIDADEDTO body);
