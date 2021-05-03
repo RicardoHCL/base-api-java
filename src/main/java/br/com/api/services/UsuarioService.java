@@ -56,7 +56,7 @@ public class UsuarioService extends ServiceGenerico<Usuario, UsuarioDTO, Long, U
 	}
 
 	public UsuarioDTO consultar(Long id) {
-		Optional<Usuario> usuario = this.consultarPorId(id);
+		Optional<Usuario> usuario = this.repository.findDistinctByIdAndAtivo(id, true);
 
 		if (usuario.isPresent()) {
 			return converterEntidadeParaDTO(usuario.get());
@@ -112,7 +112,7 @@ public class UsuarioService extends ServiceGenerico<Usuario, UsuarioDTO, Long, U
 	@Override
 	protected Usuario validarCamposAlterados(Usuario entidade) {
 
-		Optional<Usuario> usuarioDesatualizado = this.consultarPorId(entidade.getId());
+		Optional<Usuario> usuarioDesatualizado = this.repository.findDistinctByIdAndAtivo(entidade.getId(), true);
 		usuarioDesatualizado
 				.orElseThrow(() -> new EntityNotFoundException(ExceptionsConstantes.USUARIO_NAO_ENCONTRADO));
 

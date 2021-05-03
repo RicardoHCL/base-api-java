@@ -24,12 +24,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		.httpBasic().disable()
 		.csrf().disable()
 		.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-		.authorizeRequests().antMatchers("/acesso/**", "/api-docs/**", "swagger-ui.html**").permitAll()
-		.antMatchers(HttpMethod.POST,"/api/usuarios").permitAll()
-		.anyRequest().authenticated()		
+		.authorizeRequests()
+		.antMatchers("/acesso/**").permitAll()
+		.antMatchers(HttpMethod.POST,"/api/usuarios").permitAll()	
+		.antMatchers("/api/**").authenticated()
 		.and().apply(new JwtConfigurer(this.tokenProvider));
 	}
-	
+
 	@Bean
 	@Override
 	public AuthenticationManager authenticationManagerBean() throws Exception {
