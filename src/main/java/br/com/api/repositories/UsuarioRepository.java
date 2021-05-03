@@ -10,6 +10,7 @@ import br.com.api.models.Usuario;
 public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
 
 	Optional<Usuario> findDistinctByLoginAndAtivo(String login, boolean ativo);
+	Optional<Usuario> findDistinctByIdAndAtivo(Long id, boolean ativo);
 	Long countByEmailAndIdNot(String email, Long id);
 	Long countByLoginAndIdNot(String login, Long id);
 	List<Usuario> findByAtivo(boolean ativo);

@@ -2,7 +2,7 @@ package br.com.api.enums;
 
 public enum PerfilEnum {
 
-	ADMINISTRADOR("ADMIN"), USUARIO("USUARIO");
+	ADMINISTRADOR("ADMINISTRADOR"), USUARIO("USUARIO");
 	
 	private String descricao;
 	
