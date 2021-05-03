@@ -95,7 +95,7 @@ public class JwtTokenProvider {
 		List<String> perfis = new ArrayList<>();
 		
 		for (Perfil perfil : listaPerfis) {
-			perfis.add(perfil.getNome().getDescricao());
+			perfis.add(perfil.getNome());
 		}
 		
 		return perfis;

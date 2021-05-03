@@ -12,6 +12,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import br.com.api.configs.security.jwt.JwtConfigurer;
 import br.com.api.configs.security.jwt.JwtTokenProvider;
+import static br.com.api.models.Perfil.PERFIL_USUARIO;
+import static br.com.api.models.Perfil.PERFIL_ADMIN;
 
 @Configuration
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
@@ -27,7 +29,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		.authorizeRequests()
 		.antMatchers("/acesso/**").permitAll()
 		.antMatchers(HttpMethod.POST,"/api/usuarios").permitAll()	
-		.antMatchers("/api/**").authenticated()
+		//.antMatchers(HttpMethod.DELETE,"/api/usuarios/**").hasAuthority(Perfil.PERFIL_ADMIN)
+		.antMatchers("/admin/**").hasAuthority(PERFIL_ADMIN)
+		.antMatchers("/api/**").hasAnyAuthority(PERFIL_USUARIO, PERFIL_ADMIN)
 		.and().apply(new JwtConfigurer(this.tokenProvider));
 	}
 

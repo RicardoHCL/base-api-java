@@ -49,5 +49,4 @@ public class UsuarioController extends ControllerGenerico<UsuarioDTO, Long>{
 	public List<UsuarioDTO> listar() {
 		return service.consultarTodos();
 	}
-
 }

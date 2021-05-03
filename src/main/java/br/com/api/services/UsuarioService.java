@@ -1,5 +1,7 @@
 package br.com.api.services;
 
+import static br.com.api.models.Perfil.PERFIL_USUARIO;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -12,8 +14,8 @@ import org.springframework.stereotype.Service;
 import br.com.api.constants.ExceptionsConstantes;
 import br.com.api.constants.ValidacaoConstantes;
 import br.com.api.converter.DozerConverter;
+import br.com.api.dtos.AlteracaoPerfilsDTO;
 import br.com.api.dtos.UsuarioDTO;
-import br.com.api.enums.PerfilEnum;
 import br.com.api.exceptions.CustomException;
 import br.com.api.exceptions.ValidationException;
 import br.com.api.models.Perfil;
@@ -49,6 +51,30 @@ public class UsuarioService extends ServiceGenerico<Usuario, UsuarioDTO, Long, U
 		usuario = this.salvar(usuario, Utils.getUsuarioLogado());
 		return converterEntidadeParaDTO(usuario);
 	}
+	
+	public AlteracaoPerfilsDTO alterarPerfisUsuario(AlteracaoPerfilsDTO altPerfilDTO) {
+		Usuario usuario;
+		
+		if(ValidacaoUtils.isIdValido(altPerfilDTO.getIdUsuario())) {
+			usuario = this.repository.findDistinctByIdAndAtivo(altPerfilDTO.getIdUsuario(), true).get();
+		}
+		
+		usuario = this.consultarPorLogin(altPerfilDTO.getLogin());
+		
+		if(altPerfilDTO.isRemocaoPerfis()) {
+			usuario.setListaPerfis(altPerfilDTO.getPerfis());
+		}else {
+			usuario.getListaPerfis().addAll(altPerfilDTO.getPerfis());
+		}
+		
+		usuario = this.salvarEntidade(usuario);
+		
+		altPerfilDTO.setIdUsuario(usuario.getId());
+		altPerfilDTO.setLogin(usuario.getLogin());
+		altPerfilDTO.setPerfis(usuario.getListaPerfis());
+		
+		return altPerfilDTO;
+	}
 
 	@Override
 	public List<UsuarioDTO> consultarTodos() {
@@ -83,7 +109,7 @@ public class UsuarioService extends ServiceGenerico<Usuario, UsuarioDTO, Long, U
 		// Em caso de cadastro de usuario, o mesmo inicia com perfil de usuario
 		if (usuario.getListaPerfis() == null || usuario.getListaPerfis().isEmpty()) {
 			List<Perfil> perfis = new ArrayList<>();
-			Perfil perfil = new Perfil(PerfilEnum.USUARIO);
+			Perfil perfil = new Perfil(PERFIL_USUARIO);
 			perfis.add(perfil);
 			usuario.setListaPerfis(perfis);
 		}

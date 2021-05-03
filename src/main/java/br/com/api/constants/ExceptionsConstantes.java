@@ -15,5 +15,10 @@ public class ExceptionsConstantes {
 	public static final String USUARIO_NAO_ENCONTRADO = "Usuário não encontrado";
 	
 	public static final String USUARIO_OU_SENHA_INCORRETO = "Usuário ou senha incorreto";
+	
+	public static final String PERFIL_INVALIDO = " perfil inválido";
+	
+	public static final String  LOGIN_OU_ID_NAO_INFORMADO= "Login ou id do usuário não informado";
+	
 
 }
