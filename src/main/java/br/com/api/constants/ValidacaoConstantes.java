@@ -19,4 +19,6 @@ public class ValidacaoConstantes  {
 	
 	public static final String NOME_OBRIGATORIO = "O campo nome é obritório";
 	public static final String NOME_INVALIDO = "O campo nome deve ter entre 3 e 20 caracteres";
+	
+	public static final String PERFIL_OBRIGATORIO = "Precisa informar ao menos um perfil";
 }

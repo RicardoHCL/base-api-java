@@ -15,13 +15,11 @@ import org.springframework.format.annotation.DateTimeFormat;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import br.com.api.models.Usuario;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
 @Audited
 @MappedSuperclass
-@EqualsAndHashCode
 @Getter @Setter
 public abstract class Pojo<ID extends Serializable> implements IEntidade<ID> {
 	

@@ -1,5 +1,6 @@
 package br.com.api.services;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -41,8 +42,6 @@ public class PerfilService extends ServiceGenerico<Perfil, PerfilDTO, Long, Perf
 		return this.salvar(perfil, null);
 	}
 
-	//TODO MINHA LOGICA TÁ ERRADA, REMOÇAO TÁ NA VERDADE SUBSTITUINDO A QUE TÁ SALVA, É PRA REMOVER DA QUE TA SALVA, E ADICIONAR É PRA ADD AS SALVAS
-	//ANALISAR COM UM POUCO DE CALMA E REFATORAR O METODO
 	public PerfilDTO alterarPerfil(PerfilDTO perfilDTO, boolean isRemocao) {
 		List<Perfil> perfis = new ArrayList<>(); 
 		
@@ -50,7 +49,7 @@ public class PerfilService extends ServiceGenerico<Perfil, PerfilDTO, Long, Perf
 		
 		for (String nomePerfil : perfilDTO.getPerfis()) {
 			if(!isPerfilValido(nomePerfil)) {
-				throw new ValidationException(nomePerfil + ExceptionsConstantes.PERFIL_INVALIDO);
+				throw new ValidationException(MessageFormat.format(ExceptionsConstantes.PERFIL_INVALIDO, nomePerfil));
 			}
 			
 			Perfil perfil = this.consultarOuCadastrarPerfilPeloNome(new Perfil(nomePerfil));
@@ -77,7 +76,7 @@ public class PerfilService extends ServiceGenerico<Perfil, PerfilDTO, Long, Perf
 	}
 	
 	private void validarInformacoesUsuario(PerfilDTO perfilDTO) {
-		if(!(isIdValido(perfilDTO.getIdUsuario()) && isCampoStringValido(perfilDTO.getLogin()))) {
+		if(!(isIdValido(perfilDTO.getIdUsuario()) || isCampoStringValido(perfilDTO.getLogin()))) {
 			throw new ValidationException(ExceptionsConstantes.LOGIN_OU_ID_NAO_INFORMADO);
 		}
 	}

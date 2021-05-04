@@ -12,6 +12,7 @@ import org.hibernate.envers.Audited;
 import org.springframework.security.core.GrantedAuthority;
 
 import br.com.api.models.base.Pojo;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -19,6 +20,7 @@ import lombok.Setter;
 @Audited
 @Table(name = "perfis")
 @Getter @Setter
+@EqualsAndHashCode(callSuper = false)
 public class Perfil extends Pojo<Long> implements GrantedAuthority {
 
 	private static final long serialVersionUID = 1L;

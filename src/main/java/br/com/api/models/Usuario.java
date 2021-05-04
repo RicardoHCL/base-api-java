@@ -18,6 +18,7 @@ import javax.persistence.Transient;
 import org.hibernate.envers.Audited;
 
 import br.com.api.models.base.Pojo;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -25,6 +26,7 @@ import lombok.Setter;
 @Audited
 @Table(name = "usuarios")
 @Getter @Setter
+@EqualsAndHashCode(callSuper = false)
 public class Usuario extends Pojo<Long> {
 
 	private static final long serialVersionUID = 1L;

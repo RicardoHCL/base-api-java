@@ -29,7 +29,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		.authorizeRequests()
 		.antMatchers("/acesso/**").permitAll()
 		.antMatchers(HttpMethod.POST,"/api/usuarios").permitAll()	
-		//.antMatchers(HttpMethod.DELETE,"/api/usuarios/**").hasAuthority(Perfil.PERFIL_ADMIN)
 		.antMatchers("/admin/**").hasAuthority(PERFIL_ADMIN)
 		.antMatchers("/api/**").hasAnyAuthority(PERFIL_USUARIO, PERFIL_ADMIN)
 		.and().apply(new JwtConfigurer(this.tokenProvider));

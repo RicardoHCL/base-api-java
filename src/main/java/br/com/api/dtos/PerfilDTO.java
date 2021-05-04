@@ -22,10 +22,9 @@ public class PerfilDTO implements Serializable {
 	private Long idUsuario;
 	private String login;
 
-	@NotNull(message = ValidacaoConstantes.NOME_OBRIGATORIO)
-	@NotEmpty(message = ValidacaoConstantes.NOME_OBRIGATORIO)
+	@NotNull(message = ValidacaoConstantes.PERFIL_OBRIGATORIO)
+	@NotEmpty(message = ValidacaoConstantes.PERFIL_OBRIGATORIO)
 	private List<String> perfis;
-	
 	
 	public PerfilDTO() {
 		

@@ -51,29 +51,53 @@ public class UsuarioService extends ServiceGenerico<Usuario, UsuarioDTO, Long, U
 		usuario = this.salvar(usuario, Utils.getUsuarioLogado());
 		return converterEntidadeParaDTO(usuario);
 	}
-	
+
 	public AlteracaoPerfilsDTO alterarPerfisUsuario(AlteracaoPerfilsDTO altPerfilDTO) {
 		Usuario usuario;
+
+		if (ValidacaoUtils.isIdValido(altPerfilDTO.getIdUsuario())) {
+			Optional<Usuario> usuarioBanco = this.repository.findDistinctByIdAndAtivo(altPerfilDTO.getIdUsuario(), true);
 		
-		if(ValidacaoUtils.isIdValido(altPerfilDTO.getIdUsuario())) {
-			usuario = this.repository.findDistinctByIdAndAtivo(altPerfilDTO.getIdUsuario(), true).get();
+			if(!usuarioBanco.isPresent()) 
+				throw new EntityNotFoundException(ExceptionsConstantes.USUARIO_NAO_ENCONTRADO);
+			
+			usuario = usuarioBanco.get();
+		
+		} else
+			usuario = this.consultarPorLogin(altPerfilDTO.getLogin());
+
+		if (usuario.getId().equals(Utils.getUsuarioLogado().getId())) {
+			throw new CustomException(ExceptionsConstantes.PROIBIDO_ALTERAR_O_PROPRIO_PERFIL);
 		}
-		
-		usuario = this.consultarPorLogin(altPerfilDTO.getLogin());
-		
-		if(altPerfilDTO.isRemocaoPerfis()) {
-			usuario.setListaPerfis(altPerfilDTO.getPerfis());
-		}else {
-			usuario.getListaPerfis().addAll(altPerfilDTO.getPerfis());
-		}
-		
+
+		if (altPerfilDTO.isRemocaoPerfis())
+			this.removerPerfis(usuario, altPerfilDTO.getPerfis());
+		else
+			this.adicionarPerfis(usuario, altPerfilDTO.getPerfis());
+
 		usuario = this.salvarEntidade(usuario);
-		
+
 		altPerfilDTO.setIdUsuario(usuario.getId());
 		altPerfilDTO.setLogin(usuario.getLogin());
 		altPerfilDTO.setPerfis(usuario.getListaPerfis());
-		
+
 		return altPerfilDTO;
+	}
+
+	private void adicionarPerfis(Usuario usuario, List<Perfil> perfis) {
+		for (Perfil perfil : perfis) {
+			if (!usuario.getListaPerfis().contains(perfil)) {
+				usuario.getListaPerfis().add(perfil);
+			}
+		}
+	}
+
+	private void removerPerfis(Usuario usuario, List<Perfil> perfis) {
+		for (Perfil perfil : perfis) {
+			if (usuario.getListaPerfis().contains(perfil)) {
+				usuario.getListaPerfis().remove(perfil);
+			}
+		}
 	}
 
 	@Override
@@ -97,7 +121,7 @@ public class UsuarioService extends ServiceGenerico<Usuario, UsuarioDTO, Long, U
 			return usuario.get();
 		}
 
-		throw new EntityNotFoundException(ExceptionsConstantes.EMAIL_INVALIDO);
+		throw new EntityNotFoundException(ExceptionsConstantes.LOGIN_INVALIDO);
 	}
 
 	@Override
@@ -195,13 +219,13 @@ public class UsuarioService extends ServiceGenerico<Usuario, UsuarioDTO, Long, U
 		if (count > 0l) {
 			throw new CustomException(ExceptionsConstantes.EMAIL_JA_CADASTRADO);
 		}
-		
+
 		count = repository.countByLoginAndIdNot(entidade.getLogin(), idUsuario);
 
 		if (count > 0l) {
 			throw new CustomException(ExceptionsConstantes.LOGIN_JA_CADASTRADO);
 		}
-		
+
 	}
 
 	@Override
