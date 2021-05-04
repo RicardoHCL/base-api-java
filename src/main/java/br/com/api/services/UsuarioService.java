@@ -1,6 +1,7 @@
 package br.com.api.services;
 
 import static br.com.api.models.Perfil.PERFIL_USUARIO;
+import static br.com.api.models.Perfil.PERFIL_ADMIN;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,22 +48,54 @@ public class UsuarioService extends ServiceGenerico<Usuario, UsuarioDTO, Long, U
 
 	public UsuarioDTO salvarUsuario(UsuarioDTO usuarioDTO) {
 		Usuario usuario = converterDTOParaEntidade(usuarioDTO);
+		usuario.setUsuario(Utils.getUsuarioLogado());
+		this.validarPerfilUsuarioLogado(usuario);
 		usuario = this.validarCamposAlterados(usuario);
 		usuario = this.salvar(usuario, Utils.getUsuarioLogado());
 		return converterEntidadeParaDTO(usuario);
+	}
+
+	@Override
+	public List<UsuarioDTO> consultarTodos() {
+		return this.converterListaEntidadeParaListaDTO(this.repository.findByAtivo(true));
+	}
+
+	public UsuarioDTO consultar(Long id) {
+		Optional<Usuario> usuario = this.repository.findDistinctByIdAndAtivo(id, true);
+
+		if (usuario.isPresent()) {
+			return converterEntidadeParaDTO(usuario.get());
+		}
+
+		throw new EntityNotFoundException(ExceptionsConstantes.USUARIO_NAO_ENCONTRADO);
+	}
+
+	public Usuario consultarPorLogin(String login) {
+		Optional<Usuario> usuario = repository.findDistinctByLoginAndAtivo(login, true);
+		if (usuario.isPresent()) {
+			return usuario.get();
+		}
+
+		throw new EntityNotFoundException(ExceptionsConstantes.LOGIN_INVALIDO);
+	}
+
+	@Override
+	protected void validarExclusao(Usuario entidade) throws CustomException {
+		this.validarPerfilUsuarioLogado(entidade);
 	}
 
 	public AlteracaoPerfilsDTO alterarPerfisUsuario(AlteracaoPerfilsDTO altPerfilDTO) {
 		Usuario usuario;
 
 		if (ValidacaoUtils.isIdValido(altPerfilDTO.getIdUsuario())) {
-			Optional<Usuario> usuarioBanco = this.repository.findDistinctByIdAndAtivo(altPerfilDTO.getIdUsuario(), true);
-		
-			if(!usuarioBanco.isPresent()) 
+			Optional<Usuario> usuarioBanco = this.repository.findDistinctByIdAndAtivo(altPerfilDTO.getIdUsuario(),
+					true);
+
+			if (!usuarioBanco.isPresent())
 				throw new EntityNotFoundException(ExceptionsConstantes.USUARIO_NAO_ENCONTRADO);
-			
+
 			usuario = usuarioBanco.get();
-		
+
 		} else
 			usuario = this.consultarPorLogin(altPerfilDTO.getLogin());
 
@@ -98,30 +131,6 @@ public class UsuarioService extends ServiceGenerico<Usuario, UsuarioDTO, Long, U
 				usuario.getListaPerfis().remove(perfil);
 			}
 		}
-	}
-
-	@Override
-	public List<UsuarioDTO> consultarTodos() {
-		return this.converterListaEntidadeParaListaDTO(this.repository.findByAtivo(true));
-	}
-
-	public UsuarioDTO consultar(Long id) {
-		Optional<Usuario> usuario = this.repository.findDistinctByIdAndAtivo(id, true);
-
-		if (usuario.isPresent()) {
-			return converterEntidadeParaDTO(usuario.get());
-		}
-
-		throw new EntityNotFoundException(ExceptionsConstantes.USUARIO_NAO_ENCONTRADO);
-	}
-
-	public Usuario consultarPorLogin(String login) {
-		Optional<Usuario> usuario = repository.findDistinctByLoginAndAtivo(login, true);
-		if (usuario.isPresent()) {
-			return usuario.get();
-		}
-
-		throw new EntityNotFoundException(ExceptionsConstantes.LOGIN_INVALIDO);
 	}
 
 	@Override
@@ -225,7 +234,18 @@ public class UsuarioService extends ServiceGenerico<Usuario, UsuarioDTO, Long, U
 		if (count > 0l) {
 			throw new CustomException(ExceptionsConstantes.LOGIN_JA_CADASTRADO);
 		}
+	}
+	
+	private void validarPerfilUsuarioLogado(Usuario usuario) {
+		boolean isAdmin = false;
 
+		for (Perfil perfil : usuario.getUsuario().getListaPerfis()) {
+			if (perfil.getNome().equals(PERFIL_ADMIN))
+				isAdmin = true;
+		}
+
+		if (!isAdmin && !usuario.getId().equals(usuario.getUsuario().getId()))
+			throw new CustomException(ExceptionsConstantes.USUARIO_SEM_PERMISSAO);
 	}
 
 	@Override

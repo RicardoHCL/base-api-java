@@ -18,6 +18,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import br.com.api.configs.security.UserDetailService;
+import br.com.api.constants.ExceptionsConstantes;
 import br.com.api.exceptions.AuthenticationJwtException;
 import br.com.api.models.Perfil;
 import br.com.api.models.Usuario;
@@ -32,8 +33,8 @@ public class JwtTokenProvider {
 	@Value("${security.jwt.token.secret-key:secret}")
 	private String chave = "secret";
 
-	@Value("${security.jwt.token.expire-lenght:60}")
-	private long validadeEmMinutos = 60;
+	@Value("${security.jwt.token.expire-lenght:1440}")
+	private long validadeEmMinutos = 1440;
 
 	@Autowired
 	private UserDetailService service;
@@ -81,12 +82,12 @@ public class JwtTokenProvider {
 			}
 			
 			return true;
-		}catch(Exception exception) {
-			throw new AuthenticationJwtException("");
+		}catch(Exception ex) {
+			throw new AuthenticationJwtException(ExceptionsConstantes.TOKEN_INVALIDO);
 		}
 	}
 	
-	// Recuperar o email apartir do token
+	// Recuperar o login apartir do token
 	private String getLoginUsuario(String token) {
 		return Jwts.parser().setSigningKey(chave).parseClaimsJws(token).getBody().getSubject();
 	}

@@ -21,6 +21,7 @@ public class ExceptionMessageCustom extends ResponseEntityExceptionHandler {
 
 	@ExceptionHandler(Exception.class)
 	public final ResponseEntity<ExceptionResponse> rendersExceptions(Exception ex, WebRequest request) {
+		ex.printStackTrace();
 		ExceptionResponse exceptionResponse = new ExceptionResponse(DataUtils.getStringComDataHoraAtual(),
 				ex.getMessage(), request.getDescription(false));
 		return new ResponseEntity<>(exceptionResponse, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -29,7 +30,7 @@ public class ExceptionMessageCustom extends ResponseEntityExceptionHandler {
 	@Override
 	protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
 			HttpHeaders headers, HttpStatus status, WebRequest request) {
-
+		ex.printStackTrace();
 		String mensagemErro = this.getMensagemSimplificadaArgumentNotValid(ex.getMessage());
 
 		ExceptionResponse exceptionResponse = new ExceptionResponse(DataUtils.getStringComDataHoraAtual(), mensagemErro,
@@ -39,35 +40,39 @@ public class ExceptionMessageCustom extends ResponseEntityExceptionHandler {
 
 	@ExceptionHandler(CustomException.class)
 	public final ResponseEntity<ExceptionResponse> customException(CustomException ex, WebRequest request) {
+		ex.printStackTrace();
 		ExceptionResponse exceptionResponse = new ExceptionResponse(DataUtils.getStringComDataHoraAtual(),
 				ex.getMessage(), request.getDescription(false));
 		return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
 	}
 
 	@ExceptionHandler(AuthenticationJwtException.class)
-	public final ResponseEntity<ExceptionResponse> AuthenticationJwtException(AuthenticationJwtException ex, WebRequest request) {
+	public final ResponseEntity<ExceptionResponse> AuthenticationJwtException(AuthenticationJwtException ex,
+			WebRequest request) {
+		ex.printStackTrace();
 		ExceptionResponse exceptionResponse = new ExceptionResponse(DataUtils.getStringComDataHoraAtual(),
 				ex.getMessage(), request.getDescription(false));
 		return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
 	}
-	
+
 	@ExceptionHandler(ValidationException.class)
 	public final ResponseEntity<ExceptionResponse> validationException(ValidationException ex, WebRequest request) {
+		ex.printStackTrace();
 		ExceptionResponse exceptionResponse = new ExceptionResponse(DataUtils.getStringComDataHoraAtual(),
 				ex.getMessage(), request.getDescription(false));
 		return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
 	}
-	
+
 	/**
 	 * Metodos Auxiliares
 	 */
 
 	private String getMensagemSimplificadaArgumentNotValid(String mensagemCompleta) {
-		
+
 		Integer indexInicial = mensagemCompleta.indexOf("]]; default message [") + 21;
-		Integer indexFinal = mensagemCompleta.lastIndexOf("]")-1;	
-		String mensagemResumida =   mensagemCompleta.substring(indexInicial, indexFinal);
-		
+		Integer indexFinal = mensagemCompleta.lastIndexOf("]") - 1;
+		String mensagemResumida = mensagemCompleta.substring(indexInicial, indexFinal);
+
 		return mensagemResumida;
 	}
 }

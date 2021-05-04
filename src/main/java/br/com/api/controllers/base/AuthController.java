@@ -21,8 +21,10 @@ import br.com.api.constants.ExceptionsConstantes;
 import br.com.api.dtos.UsuarioDTO;
 import br.com.api.models.Usuario;
 import br.com.api.services.UsuarioService;
+import io.swagger.annotations.Api;
 
 @RestController
+@Api(value = "Login", description = "Endpoint para efetuar o login", tags = "Login")
 @RequestMapping("/acesso")
 public class AuthController {
 
@@ -39,6 +41,7 @@ public class AuthController {
 	@SuppressWarnings("rawtypes")
 	public ResponseEntity criarSessaoLogin(@RequestBody UsuarioDTO usuarioDTO) {
 		try {
+			//TODO IMPLEMENTAR REFRESH TOKEN
 			authManager.authenticate(
 					new UsernamePasswordAuthenticationToken(usuarioDTO.getLogin(), usuarioDTO.getSenha()));
 

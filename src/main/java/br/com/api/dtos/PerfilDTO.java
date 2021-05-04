@@ -25,14 +25,18 @@ public class PerfilDTO implements Serializable {
 	@NotNull(message = ValidacaoConstantes.PERFIL_OBRIGATORIO)
 	@NotEmpty(message = ValidacaoConstantes.PERFIL_OBRIGATORIO)
 	private List<String> perfis;
-	
+
 	public PerfilDTO() {
-		
+
 	}
-			
+
 	public PerfilDTO(Long idUsuario, String login) {
 		this.idUsuario = idUsuario;
 		this.login = login;
 	}
-	
+
+	public PerfilDTO(List<String> perfis) {
+		this.perfis = perfis;
+	}
+
 }

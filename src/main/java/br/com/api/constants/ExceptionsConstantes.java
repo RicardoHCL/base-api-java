@@ -14,6 +14,8 @@ public class ExceptionsConstantes {
 	
 	public static final String LOGIN_INVALIDO = "Login inválido";
 	
+	public static final String TOKEN_INVALIDO = "Token inválido";
+	
 	public static final String USUARIO_NAO_ENCONTRADO = "Usuário não encontrado";
 	
 	public static final String USUARIO_OU_SENHA_INCORRETO = "Usuário ou senha incorreto";
@@ -24,5 +26,6 @@ public class ExceptionsConstantes {
 	
 	public static final String PROIBIDO_ALTERAR_O_PROPRIO_PERFIL = "Não é permitido alterar o próprio perfil";
 	
+	public static final String USUARIO_SEM_PERMISSAO = "Você não tem permissão para esta operação";
 
 }
