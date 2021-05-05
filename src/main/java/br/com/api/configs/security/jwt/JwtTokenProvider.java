@@ -10,6 +10,7 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -29,6 +30,8 @@ import io.jsonwebtoken.SignatureAlgorithm;
 
 @Service
 public class JwtTokenProvider {
+	
+	private static Logger logger = Logger.getLogger(JwtTokenProvider.class);
 
 	@Value("${security.jwt.token.secret-key:secret}")
 	private String chave = "secret";
@@ -80,9 +83,9 @@ public class JwtTokenProvider {
 			if(claims.getBody().getExpiration().before(new Date())) {
 				return false;
 			}
-			
 			return true;
 		}catch(Exception ex) {
+			logger.error("", ex);
 			throw new AuthenticationJwtException(ExceptionsConstantes.TOKEN_INVALIDO);
 		}
 	}

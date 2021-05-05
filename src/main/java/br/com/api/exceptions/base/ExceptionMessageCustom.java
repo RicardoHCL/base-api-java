@@ -1,5 +1,6 @@
 package br.com.api.exceptions.base;
 
+import org.apache.log4j.Logger;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,10 +19,12 @@ import br.com.api.utils.DataUtils;
 @RestController
 @ControllerAdvice
 public class ExceptionMessageCustom extends ResponseEntityExceptionHandler {
+	
+	private static Logger logger = Logger.getLogger(ExceptionMessageCustom.class);
 
 	@ExceptionHandler(Exception.class)
 	public final ResponseEntity<ExceptionResponse> rendersExceptions(Exception ex, WebRequest request) {
-		ex.printStackTrace();
+		logger.error("", ex);
 		ExceptionResponse exceptionResponse = new ExceptionResponse(DataUtils.getStringComDataHoraAtual(),
 				ex.getMessage(), request.getDescription(false));
 		return new ResponseEntity<>(exceptionResponse, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -30,7 +33,7 @@ public class ExceptionMessageCustom extends ResponseEntityExceptionHandler {
 	@Override
 	protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
 			HttpHeaders headers, HttpStatus status, WebRequest request) {
-		ex.printStackTrace();
+		logger.error("", ex);
 		String mensagemErro = this.getMensagemSimplificadaArgumentNotValid(ex.getMessage());
 
 		ExceptionResponse exceptionResponse = new ExceptionResponse(DataUtils.getStringComDataHoraAtual(), mensagemErro,
@@ -40,7 +43,7 @@ public class ExceptionMessageCustom extends ResponseEntityExceptionHandler {
 
 	@ExceptionHandler(CustomException.class)
 	public final ResponseEntity<ExceptionResponse> customException(CustomException ex, WebRequest request) {
-		ex.printStackTrace();
+		logger.error("", ex);
 		ExceptionResponse exceptionResponse = new ExceptionResponse(DataUtils.getStringComDataHoraAtual(),
 				ex.getMessage(), request.getDescription(false));
 		return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
@@ -49,7 +52,7 @@ public class ExceptionMessageCustom extends ResponseEntityExceptionHandler {
 	@ExceptionHandler(AuthenticationJwtException.class)
 	public final ResponseEntity<ExceptionResponse> AuthenticationJwtException(AuthenticationJwtException ex,
 			WebRequest request) {
-		ex.printStackTrace();
+		logger.error("", ex);
 		ExceptionResponse exceptionResponse = new ExceptionResponse(DataUtils.getStringComDataHoraAtual(),
 				ex.getMessage(), request.getDescription(false));
 		return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
@@ -57,7 +60,7 @@ public class ExceptionMessageCustom extends ResponseEntityExceptionHandler {
 
 	@ExceptionHandler(ValidationException.class)
 	public final ResponseEntity<ExceptionResponse> validationException(ValidationException ex, WebRequest request) {
-		ex.printStackTrace();
+		logger.error("", ex);
 		ExceptionResponse exceptionResponse = new ExceptionResponse(DataUtils.getStringComDataHoraAtual(),
 				ex.getMessage(), request.getDescription(false));
 		return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);

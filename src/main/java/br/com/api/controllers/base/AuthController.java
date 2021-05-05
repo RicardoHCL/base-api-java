@@ -41,7 +41,6 @@ public class AuthController {
 	@SuppressWarnings("rawtypes")
 	public ResponseEntity criarSessaoLogin(@RequestBody UsuarioDTO usuarioDTO) {
 		try {
-			//TODO IMPLEMENTAR REFRESH TOKEN
 			authManager.authenticate(
 					new UsernamePasswordAuthenticationToken(usuarioDTO.getLogin(), usuarioDTO.getSenha()));
 
