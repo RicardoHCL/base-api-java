@@ -40,9 +40,14 @@ public class PerfilService extends ServiceGenerico<Perfil, PerfilDTO, Long, Perf
 	}
 
 	public Perfil consultarOuCadastrarPerfilPeloNome(Perfil perfil) {
+		
+		if (!isPerfilValido(perfil.getNome())) {
+			throw new ValidationException(MessageFormat.format(ExceptionsConstantes.PERFIL_INVALIDO, perfil.getNome()));
+		}
+		
 		Optional<Perfil> perfilBanco = repository.findDistinctByNomeAndAtivo(perfil.getNome(), true);
 
-		if (perfilBanco.isPresent()) {
+		if (perfilBanco.isPresent() && perfilBanco.get().getId() != null  ) {
 			return perfilBanco.get();
 		}
 		return this.salvar(perfil, null);
@@ -54,10 +59,6 @@ public class PerfilService extends ServiceGenerico<Perfil, PerfilDTO, Long, Perf
 		this.validarInformacoesUsuario(perfilDTO);
 
 		for (String nomePerfil : perfilDTO.getPerfis()) {
-			if (!isPerfilValido(nomePerfil)) {
-				throw new ValidationException(MessageFormat.format(ExceptionsConstantes.PERFIL_INVALIDO, nomePerfil));
-			}
-
 			Perfil perfil = this.consultarOuCadastrarPerfilPeloNome(new Perfil(nomePerfil));
 			perfis.add(perfil);
 		}
@@ -90,11 +91,11 @@ public class PerfilService extends ServiceGenerico<Perfil, PerfilDTO, Long, Perf
 
 	private PerfilDTO converterListaPerfisParaPerfilDTO(List<Perfil> perfis) throws CustomException {
 		List<String> listaNomesPerfis = new ArrayList<>();
-		
+
 		for (Perfil perfil : perfis) {
 			listaNomesPerfis.add(perfil.getNome());
 		}
-		
+
 		return new PerfilDTO(listaNomesPerfis);
 	}
 

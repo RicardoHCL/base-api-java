@@ -9,13 +9,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.com.api.constants.UrlConstantes;
 import br.com.api.dtos.PerfilDTO;
 import br.com.api.services.PerfilService;
 import io.swagger.annotations.Api;
 
 @RestController
 @Api(value = "Perfis", description = "Endpoint dos perfis", tags = "Perfis")
-@RequestMapping("/admin/perfis")
+@RequestMapping(UrlConstantes.PERFIS)
 public class PerfilController {
 
 	@Autowired

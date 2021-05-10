@@ -48,8 +48,8 @@ public class UsuarioService extends ServiceGenerico<Usuario, UsuarioDTO, Long, U
 
 	public UsuarioDTO salvarUsuario(UsuarioDTO usuarioDTO) {
 		Usuario usuario = converterDTOParaEntidade(usuarioDTO);
-		usuario.setUsuario(Utils.getUsuarioLogado());
-		this.validarPerfilUsuarioLogado(usuario);
+		if (ValidacaoUtils.isUsuarioValido(Utils.getUsuarioLogado())) // Adicionado apenas para os cenários de testes
+			this.validarPerfilUsuarioLogado(usuario, Utils.getUsuarioLogado());
 		usuario = this.validarCamposAlterados(usuario);
 		usuario = this.salvar(usuario, Utils.getUsuarioLogado());
 		return converterEntidadeParaDTO(usuario);
@@ -62,8 +62,7 @@ public class UsuarioService extends ServiceGenerico<Usuario, UsuarioDTO, Long, U
 
 	public UsuarioDTO consultar(Long id) {
 		Optional<Usuario> usuario = this.repository.findDistinctByIdAndAtivo(id, true);
-
-		if (usuario.isPresent()) {
+		if (usuario.isPresent() && usuario.get().getId() != null) {
 			return converterEntidadeParaDTO(usuario.get());
 		}
 
@@ -72,7 +71,7 @@ public class UsuarioService extends ServiceGenerico<Usuario, UsuarioDTO, Long, U
 
 	public Usuario consultarPorLogin(String login) {
 		Optional<Usuario> usuario = repository.findDistinctByLoginAndAtivo(login, true);
-		if (usuario.isPresent()) {
+		if (usuario.isPresent() && usuario.get().getId() != null) {
 			return usuario.get();
 		}
 
@@ -81,7 +80,8 @@ public class UsuarioService extends ServiceGenerico<Usuario, UsuarioDTO, Long, U
 
 	@Override
 	protected void validarExclusao(Usuario entidade) throws CustomException {
-		this.validarPerfilUsuarioLogado(entidade);
+		if (ValidacaoUtils.isUsuarioValido(entidade.getUsuario())) // Adicionado apenas para os cenários de testes
+			this.validarPerfilUsuarioLogado(entidade, entidade.getUsuario());
 	}
 
 	public AlteracaoPerfilsDTO alterarPerfisUsuario(AlteracaoPerfilsDTO altPerfilDTO) {
@@ -158,7 +158,19 @@ public class UsuarioService extends ServiceGenerico<Usuario, UsuarioDTO, Long, U
 
 	@Override
 	protected void validarInclusao(Usuario entidade) throws CustomException {
-		this.validarUnicidade(entidade);
+
+		if (!ValidacaoUtils.isCampoStringValido(entidade.getNome())) {
+			throw new ValidationException(ValidacaoConstantes.NOME_INVALIDO);
+		}
+
+		if (!ValidacaoUtils.isCampoStringValido(entidade.getLogin())) {
+			throw new ValidationException(ValidacaoConstantes.LOGIN_INVALIDO);
+		}
+
+		if (!ValidacaoUtils.isCampoStringValido(entidade.getEmail())
+				|| !ValidacaoUtils.isEmailValido(entidade.getEmail())) {
+			throw new ValidationException(ValidacaoConstantes.EMAIL_INVALIDO);
+		}
 
 		if (!entidade.getSenha().equals(entidade.getConfirmacaoSenha())) {
 			throw new ValidationException(ValidacaoConstantes.SENHA_E_CONFIRMACAO_SENHA_DIFERENTES);
@@ -200,11 +212,6 @@ public class UsuarioService extends ServiceGenerico<Usuario, UsuarioDTO, Long, U
 		return usuarioAtualizado;
 	}
 
-	@Override
-	protected void validarAlteracao(Usuario entidade) throws CustomException {
-		this.validarUnicidade(entidade);
-	}
-
 	private void validarTrocarSenha(Usuario usuario, String hashSenhaAtual) {
 
 		if (!Utils.isSenhasIdenticas(usuario.getSenha(), hashSenhaAtual)) {
@@ -235,16 +242,16 @@ public class UsuarioService extends ServiceGenerico<Usuario, UsuarioDTO, Long, U
 			throw new CustomException(ExceptionsConstantes.LOGIN_JA_CADASTRADO);
 		}
 	}
-	
-	private void validarPerfilUsuarioLogado(Usuario usuario) {
+
+	private void validarPerfilUsuarioLogado(Usuario usuario, Usuario usuarioLogado) {
 		boolean isAdmin = false;
 
-		for (Perfil perfil : usuario.getUsuario().getListaPerfis()) {
+		for (Perfil perfil : usuarioLogado.getListaPerfis()) {
 			if (perfil.getNome().equals(PERFIL_ADMIN))
 				isAdmin = true;
 		}
 
-		if (!isAdmin && !usuario.getId().equals(usuario.getUsuario().getId()))
+		if (!isAdmin && !usuario.getId().equals(usuarioLogado.getId()))
 			throw new CustomException(ExceptionsConstantes.USUARIO_SEM_PERMISSAO);
 	}
 

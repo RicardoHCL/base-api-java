@@ -26,6 +26,9 @@ public class PerfilDTO implements Serializable {
 	@NotEmpty(message = ValidacaoConstantes.PERFIL_OBRIGATORIO)
 	private List<String> perfis;
 
+	/**
+	 * Construtores
+	 */
 	public PerfilDTO() {
 
 	}
@@ -38,5 +41,5 @@ public class PerfilDTO implements Serializable {
 	public PerfilDTO(List<String> perfis) {
 		this.perfis = perfis;
 	}
-
+	
 }

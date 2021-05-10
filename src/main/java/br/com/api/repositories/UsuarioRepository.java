@@ -13,5 +13,6 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
 	Optional<Usuario> findDistinctByIdAndAtivo(Long id, boolean ativo);
 	Long countByEmailAndIdNot(String email, Long id);
 	Long countByLoginAndIdNot(String login, Long id);
+	Long countByAtivo(boolean ativo);
 	List<Usuario> findByAtivo(boolean ativo);
 }

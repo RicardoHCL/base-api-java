@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.api.configs.security.jwt.JwtTokenProvider;
 import br.com.api.constants.ExceptionsConstantes;
+import br.com.api.constants.UrlConstantes;
 import br.com.api.dtos.UsuarioDTO;
 import br.com.api.models.Usuario;
 import br.com.api.services.UsuarioService;
@@ -25,7 +26,7 @@ import io.swagger.annotations.Api;
 
 @RestController
 @Api(value = "Login", description = "Endpoint para efetuar o login", tags = "Login")
-@RequestMapping("/acesso")
+@RequestMapping(UrlConstantes.ACESSO_LIBERADO)
 public class AuthController {
 
 	@Autowired

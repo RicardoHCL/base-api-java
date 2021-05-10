@@ -29,8 +29,8 @@ public class Perfil extends Pojo<Long> implements GrantedAuthority {
 	public static final String PERFIL_ADMIN = "ADMINISTRADOR";
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_pefil")
-	@SequenceGenerator(name = "seq_pefil", sequenceName = "seq_pefil", allocationSize = 1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_perfil")
+	@SequenceGenerator(name = "seq_perfil", sequenceName = "seq_perfil", allocationSize = 1)
 	@Column(name = "id")
 	private Long id;
 
@@ -51,7 +51,7 @@ public class Perfil extends Pojo<Long> implements GrantedAuthority {
 	public Perfil(String nome) {
 		this.nome = nome;
 	}
-
+	
 	@Override
 	public String getAuthority() {
 		return nome;
