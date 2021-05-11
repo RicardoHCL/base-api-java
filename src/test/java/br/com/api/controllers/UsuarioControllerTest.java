@@ -55,12 +55,12 @@ public class UsuarioControllerTest {
 		String json = "{ \"nome\": \"Teste\"," + "  \"login\": \"teste\"," + " \"email\": \"teste@gmail.com\","
 				+ " \"senha\": \"123456\"," + " \"confirmacaoSenha\": \"123456\" }";
 
-		MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders.post(UrlConstantes.USUARIOS)
+		MvcResult resposta = this.mockMvc.perform(MockMvcRequestBuilders.post(UrlConstantes.USUARIOS)
 				.contentType(MediaType.APPLICATION_JSON).content(json)).andExpect(MockMvcResultMatchers.status().isOk())
 				.andReturn();
 
-		String content = result.getResponse().getContentAsString();
-		UsuarioDTO dto = converterJsonEmObjeto(content);
+		String conteudo = resposta.getResponse().getContentAsString();
+		UsuarioDTO dto = converterJsonEmUsuarioDTO(conteudo);
 
 		this.usuario = this.repository.findById(dto.getId()).get();
 	}
@@ -73,12 +73,12 @@ public class UsuarioControllerTest {
 				+ " \"email\": \"ricardo@gmail.com\"," + " \"senha\": \"123456\","
 				+ " \"confirmacaoSenha\": \"123456\" }";
 
-		MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders.post(UrlConstantes.USUARIOS)
+		MvcResult resposta = this.mockMvc.perform(MockMvcRequestBuilders.post(UrlConstantes.USUARIOS)
 				.contentType(MediaType.APPLICATION_JSON).content(json)).andExpect(MockMvcResultMatchers.status().isOk())
 				.andReturn();
 
-		String content = result.getResponse().getContentAsString();
-		UsuarioDTO dto = converterJsonEmObjeto(content);
+		String conteudo = resposta.getResponse().getContentAsString();
+		UsuarioDTO dto = converterJsonEmUsuarioDTO(conteudo);
 
 		assertThat(dto.getId()).isNotNull();
 		assertThat(dto.getNome()).isEqualTo("Ricardo Lima");
@@ -90,12 +90,12 @@ public class UsuarioControllerTest {
 	@Order(2)
 	@DisplayName("Consultando usuário existente no banco")
 	public void consultar() throws Exception {
-		MvcResult result = this.mockMvc
+		MvcResult resposta = this.mockMvc
 				.perform(MockMvcRequestBuilders.get(UrlConstantes.USUARIOS + "/" + this.usuario.getId()))
 				.andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
 
-		String content = result.getResponse().getContentAsString();
-		UsuarioDTO dto = converterJsonEmObjeto(content);
+		String conteudo = resposta.getResponse().getContentAsString();
+		UsuarioDTO dto = converterJsonEmUsuarioDTO(conteudo);
 
 		assertThat(dto.getId()).isEqualTo(this.usuario.getId());
 		assertThat(dto.getNome()).isEqualTo("Teste");
@@ -109,12 +109,12 @@ public class UsuarioControllerTest {
 	public void atualizarNome() throws Exception {
 		String json = "{ \"nome\": \"Teste Atualizado\" }";
 		
-		MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders.put(UrlConstantes.USUARIOS + "/" + this.usuario.getId())
+		MvcResult resposta = this.mockMvc.perform(MockMvcRequestBuilders.put(UrlConstantes.USUARIOS + "/" + this.usuario.getId())
 				.contentType(MediaType.APPLICATION_JSON).content(json)).andExpect(MockMvcResultMatchers.status().isOk())
 				.andReturn();
 		
-		String content = result.getResponse().getContentAsString();
-		UsuarioDTO dto = converterJsonEmObjeto(content);
+		String conteudo = resposta.getResponse().getContentAsString();
+		UsuarioDTO dto = converterJsonEmUsuarioDTO(conteudo);
 
 		assertThat(dto.getId()).isEqualTo(this.usuario.getId());
 		assertThat(dto.getNome()).isEqualTo("Teste Atualizado");
@@ -125,15 +125,15 @@ public class UsuarioControllerTest {
 	@Test
 	@Order(4)
 	@DisplayName("Atualizando a senha do usuário")
-	public void atualizarSenha() throws Exception { //TODO RESOLVER PROBLEMA NESSE TESTE E DAR CONTINUIDADE AOS DEMAIS TESTES
-		String json = "{ \"senha\": \"123456\", \"confirmacaoSenha\": \"123456\",  \"novaSenha\": \"12345678\" }";
+	public void atualizarSenha() throws Exception {
+		String json = "{ \"senha\": \"123456\", \"confirmacaoSenha\": \"12345678\",  \"novaSenha\": \"12345678\" }";
 		
-		MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders.put(UrlConstantes.USUARIOS + "/" + this.usuario.getId())
+		MvcResult resposta = this.mockMvc.perform(MockMvcRequestBuilders.put(UrlConstantes.USUARIOS + "/" + this.usuario.getId())
 				.contentType(MediaType.APPLICATION_JSON).content(json)).andExpect(MockMvcResultMatchers.status().isOk())
 				.andReturn();
 		
-		String content = result.getResponse().getContentAsString();
-		UsuarioDTO dto = converterJsonEmObjeto(content);
+		String conteudo = resposta.getResponse().getContentAsString();
+		UsuarioDTO dto = converterJsonEmUsuarioDTO(conteudo);
 		
 		Usuario usuario = this.repository.findById(dto.getId()).get();
 		
@@ -147,12 +147,12 @@ public class UsuarioControllerTest {
 	@Order(5)
 	@DisplayName("listando os usuários ativos")
 	public void listarUsuariosAtivos() throws Exception {
-		MvcResult result = this.mockMvc
+		MvcResult resposta = this.mockMvc
 				.perform(MockMvcRequestBuilders.get(UrlConstantes.USUARIOS))
 				.andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
 		
-		String content = result.getResponse().getContentAsString();
-		UsuarioDTO[] usuarios = converterJsonEmListaObjeto(content);
+		String conteudo = resposta.getResponse().getContentAsString();
+		UsuarioDTO[] usuarios = converterJsonEmListaUsuarioDTO(conteudo);
 		
 		assertThat(usuarios.length).isEqualTo(2);
 	}
@@ -170,7 +170,7 @@ public class UsuarioControllerTest {
 		assertThat(qdtUsuariosAtivos).isEqualTo(1);
 	}
 
-	private UsuarioDTO converterJsonEmObjeto(String json) {
+	public static UsuarioDTO converterJsonEmUsuarioDTO(String json) {
 		UsuarioDTO usuario = new UsuarioDTO();
 		ObjectMapper mapper = new ObjectMapper();
 
@@ -183,7 +183,7 @@ public class UsuarioControllerTest {
 		return usuario;
 	}
 	
-	private UsuarioDTO[] converterJsonEmListaObjeto(String json) {
+	private UsuarioDTO[] converterJsonEmListaUsuarioDTO(String json) {
 		UsuarioDTO[] usuarios = null ;
 		ObjectMapper mapper = new ObjectMapper();
 

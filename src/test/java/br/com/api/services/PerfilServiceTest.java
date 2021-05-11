@@ -3,13 +3,16 @@ package br.com.api.services;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -24,6 +27,8 @@ import br.com.api.repositories.PerfilRepository;
 
 @ActiveProfiles("test")
 @TestInstance(Lifecycle.PER_CLASS)
+@TestMethodOrder(OrderAnnotation.class)
+@DisplayName("Testes unitários do perfil")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class PerfilServiceTest {
 
@@ -36,21 +41,25 @@ public class PerfilServiceTest {
 	@MockBean
 	private UsuarioService usuarioService;
 
-	@BeforeEach
-	public void init() {
-		Perfil perfilUsuario = new Perfil(1l, Perfil.PERFIL_USUARIO);
-		Perfil perfilAdmin = new Perfil(2l, Perfil.PERFIL_ADMIN);
+	//"Usuários salvos"
+	private Perfil perfilUsuario = new Perfil(1l, Perfil.PERFIL_USUARIO);
+	private Perfil perfilAdmin = new Perfil(2l, Perfil.PERFIL_ADMIN);
 
+	@BeforeEach
+	@DisplayName("Preparando para iniciar os testes com algumas informações mocadas")
+	public void setUp() {
 		Mockito.when(this.repository.findDistinctByNomeAndAtivo(Perfil.PERFIL_USUARIO, true))
-				.thenReturn(Optional.of(perfilUsuario));
+				.thenReturn(Optional.of(this.perfilUsuario));
 
 		Mockito.when(this.repository.findDistinctByNomeAndAtivo(Perfil.PERFIL_ADMIN, true))
 				.thenReturn(Optional.of(new Perfil()));
 
-		Mockito.when(this.repository.save(Mockito.any(Perfil.class))).thenReturn(perfilAdmin);
+		Mockito.when(this.repository.save(Mockito.any(Perfil.class))).thenReturn(this.perfilAdmin);
 	}
 
 	@Test
+	@Order(1)
+	@DisplayName("Consultando perfil pelo nome")
 	public void consultarPerfilPeloNome() {
 		Perfil perfil = this.service.consultarOuCadastrarPerfilPeloNome(new Perfil(Perfil.PERFIL_USUARIO));
 
@@ -59,6 +68,8 @@ public class PerfilServiceTest {
 	}
 
 	@Test
+	@Order(2)
+	@DisplayName("Cadastrando perfil pelo nome")
 	public void cadastrarPerfilPeloNome() {
 		Perfil perfil = this.service.consultarOuCadastrarPerfilPeloNome(new Perfil(Perfil.PERFIL_ADMIN));
 
@@ -67,6 +78,8 @@ public class PerfilServiceTest {
 	}
 
 	@Test
+	@Order(3)
+	@DisplayName("Falha ao cadastrar perfil com nome inválido")
 	public void erroAoCadastrarPerfilPeloNome() {
 		try {
 			this.service.consultarOuCadastrarPerfilPeloNome(new Perfil("MODERADOR"));
@@ -77,12 +90,10 @@ public class PerfilServiceTest {
 	}
 
 	@Test
+	@Order(4)
+	@DisplayName("Listando os perfis ativos")
 	public void listarPerfisAtivos() {
-		// Construindo mocks
-		Perfil perfilUsuario = new Perfil(1l, Perfil.PERFIL_USUARIO);
-		Perfil perfilAdmin = new Perfil(2l, Perfil.PERFIL_ADMIN);
-		List<Perfil> perfis = Arrays.asList(perfilUsuario, perfilAdmin);
-		Mockito.when(this.repository.findByAtivo(true)).thenReturn(perfis);
+		Mockito.when(this.repository.findByAtivo(true)).thenReturn(Arrays.asList(this.perfilUsuario, this.perfilAdmin));
 
 		PerfilDTO dto = this.service.listarPerfisAtivos();
 
@@ -95,12 +106,12 @@ public class PerfilServiceTest {
 	}
 
 	@Test
+	@Order(5)
+	@DisplayName("Adicionando perfis em um usuário")
 	public void adicionarPerfilAoUsuario() {
 		// Construindo mocks
-		Perfil perfilUsuario = new Perfil(1l, Perfil.PERFIL_USUARIO);
-		Perfil perfilAdmin = new Perfil(2l, Perfil.PERFIL_ADMIN);
 		AlteracaoPerfilsDTO altPerfilDTO = new AlteracaoPerfilsDTO(3l, "ricardo",
-				Arrays.asList(perfilUsuario, perfilAdmin), false);
+				Arrays.asList(this.perfilUsuario, this.perfilAdmin), false);
 		Mockito.when(this.usuarioService.alterarPerfisUsuario(Mockito.any(AlteracaoPerfilsDTO.class)))
 				.thenReturn(altPerfilDTO);
 
@@ -118,6 +129,8 @@ public class PerfilServiceTest {
 	}
 
 	@Test
+	@Order(6)
+	@DisplayName("Falha ao adicionar perfis sem informar o id ou login do usuário")
 	public void erroAoAdicionarPerfilAoUsuarioT01() {
 		try {
 			PerfilDTO dto = new PerfilDTO(Arrays.asList(Perfil.PERFIL_ADMIN, Perfil.PERFIL_ADMIN));
@@ -130,6 +143,8 @@ public class PerfilServiceTest {
 	}
 
 	@Test
+	@Order(7)
+	@DisplayName("Falha ao adicionar perfis, informando um perfil inválido")
 	public void erroAoAdicionarPerfilAoUsuarioT02() {
 		try {
 			PerfilDTO dto = new PerfilDTO(Arrays.asList(Perfil.PERFIL_ADMIN, "MODERADOR"));
@@ -143,10 +158,11 @@ public class PerfilServiceTest {
 	}
 
 	@Test
-	public void removerPerfilAoUsuario() {
+	@Order(8)
+	@DisplayName("Removendo perfis de um usuário")
+	public void removerPerfilUsuario() {
 		// Construindo mocks
-		Perfil perfilUsuario = new Perfil(1l, Perfil.PERFIL_USUARIO);
-		AlteracaoPerfilsDTO altPerfilDTO = new AlteracaoPerfilsDTO(3l, "ricardo", Arrays.asList(perfilUsuario), true);
+		AlteracaoPerfilsDTO altPerfilDTO = new AlteracaoPerfilsDTO(3l, "ricardo", Arrays.asList(this.perfilUsuario), true);
 		Mockito.when(this.usuarioService.alterarPerfisUsuario(Mockito.any(AlteracaoPerfilsDTO.class)))
 				.thenReturn(altPerfilDTO);
 

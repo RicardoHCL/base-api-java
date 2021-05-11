@@ -8,9 +8,13 @@ import java.util.Optional;
 
 import javax.persistence.EntityNotFoundException;
 
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -26,6 +30,8 @@ import br.com.api.repositories.UsuarioRepository;
 
 @ActiveProfiles("test")
 @TestInstance(Lifecycle.PER_CLASS)
+@TestMethodOrder(OrderAnnotation.class)
+@DisplayName("Testes unitários do usuário")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class UsuarioServiceTest {
 
@@ -39,6 +45,8 @@ public class UsuarioServiceTest {
 	private PerfilService perfilService;
 
 	@Test
+	@Order(1)
+	@DisplayName("Criando um usuário")
 	public void criarUsuario() {
 		// Construindo mocks
 		Usuario usuario = new Usuario(1l, "Ricardo Lima", "ricardo", "ricardo@gmail.com",
@@ -59,12 +67,14 @@ public class UsuarioServiceTest {
 	}
 
 	@Test
+	@Order(2)
+	@DisplayName("Falha ao cadastrar usuário com email já existente")
 	public void erroAoCriarUsuarioT01() {
 		Mockito.when(this.repository.countByEmailAndIdNot(Mockito.anyString(), Mockito.anyLong())).thenReturn(1l);
 
 		try {
 			UsuarioDTO dto = new UsuarioDTO("Ricardo Lima", "ricardo", "ricardo@gmail.com", "123456", "123456");
-			dto = this.service.criarUsuario(dto);
+			this.service.criarUsuario(dto);
 		} catch (Exception e) {
 			assertThat(CustomException.class).isEqualTo(e.getClass());
 			assertThat("Email informado já cadastrado").isEqualTo(e.getMessage());
@@ -72,12 +82,14 @@ public class UsuarioServiceTest {
 	}
 
 	@Test
+	@Order(3)
+	@DisplayName("Falha ao cadastrar usuário com login já existente")
 	public void erroAoCriarUsuarioT02() {
 		Mockito.when(this.repository.countByLoginAndIdNot(Mockito.anyString(), Mockito.anyLong())).thenReturn(1l);
 
 		try {
-			UsuarioDTO dto = new UsuarioDTO("Ricardo Lima", "ricardo", "ricardo@gmail.com", "123456", "123456");
-			dto = this.service.criarUsuario(dto);
+			UsuarioDTO dto = new UsuarioDTO("Ricardo Lima", "ricardo", "ricardol@gmail.com", "123456", "123456");
+			this.service.criarUsuario(dto);
 		} catch (Exception e) {
 			assertThat(CustomException.class).isEqualTo(e.getClass());
 			assertThat("Login informado já cadastrado").isEqualTo(e.getMessage());
@@ -85,10 +97,12 @@ public class UsuarioServiceTest {
 	}
 
 	@Test
+	@Order(4)
+	@DisplayName("Falha ao cadastrar usuário, senhas diferentes")
 	public void erroAoCriarUsuarioT03() {
 		try {
-			UsuarioDTO dto = new UsuarioDTO("Ricardo Lima", "ricardo", "ricardo@gmail.com", "123456", "1234567");
-			dto = this.service.criarUsuario(dto);
+			UsuarioDTO dto = new UsuarioDTO("Ricardo Lima", "ricardol", "ricardol@gmail.com", "123456", "1234567");
+			this.service.criarUsuario(dto);
 		} catch (Exception e) {
 			assertThat(ValidationException.class).isEqualTo(e.getClass());
 			assertThat("Confirmação de senha diferente da senha").isEqualTo(e.getMessage());
@@ -96,10 +110,12 @@ public class UsuarioServiceTest {
 	}
 
 	@Test
+	@Order(5)
+	@DisplayName("Falha ao cadastrar usuário sem informar o nome")
 	public void erroAoCriarUsuarioT04() {
 		try {
 			UsuarioDTO dto = new UsuarioDTO("", "ricardo", "ricardo@gmail.com", "123456", "1234567");
-			dto = this.service.criarUsuario(dto);
+			this.service.criarUsuario(dto);
 		} catch (Exception e) {
 			assertThat(ValidationException.class).isEqualTo(e.getClass());
 			assertThat("O campo nome deve ter entre 3 e 20 caracteres").isEqualTo(e.getMessage());
@@ -107,10 +123,12 @@ public class UsuarioServiceTest {
 	}
 
 	@Test
+	@Order(6)
+	@DisplayName("Falha ao cadastrar usuário sem informar o login")
 	public void erroAoCriarUsuarioT05() {
 		try {
 			UsuarioDTO dto = new UsuarioDTO("Ricardo Lima", null, "ricardo@gmail.com", "123456", "1234567");
-			dto = this.service.criarUsuario(dto);
+			this.service.criarUsuario(dto);
 		} catch (Exception e) {
 			assertThat(ValidationException.class).isEqualTo(e.getClass());
 			assertThat("O campo login deve ter entre 5 e 10 caracteres").isEqualTo(e.getMessage());
@@ -118,10 +136,12 @@ public class UsuarioServiceTest {
 	}
 
 	@Test
+	@Order(7)
+	@DisplayName("Falha ao cadastrar usuário informando email inválido")
 	public void erroAoCriarUsuarioT06() {
 		try {
 			UsuarioDTO dto = new UsuarioDTO("Ricardo Lima", "ricardo", "ri", "123456", "1234567");
-			dto = this.service.criarUsuario(dto);
+			this.service.criarUsuario(dto);
 		} catch (Exception e) {
 			assertThat(ValidationException.class).isEqualTo(e.getClass());
 			assertThat("Email inválido").isEqualTo(e.getMessage());
@@ -129,6 +149,8 @@ public class UsuarioServiceTest {
 	}
 
 	@Test
+	@Order(8)
+	@DisplayName("Listando os usuários ativos")
 	public void listarTodosUsuariosAtivos() {
 		Usuario usuario1 = new Usuario(1l, "teste", "teste", "teste@gmail.com",
 				"$2a$10$A3BtshmFkCkcmWkDLfzA6OoS0xIEVPvc/rh2lbITuzoNqSFHjuizC");
@@ -143,10 +165,13 @@ public class UsuarioServiceTest {
 	}
 
 	@Test
+	@Order(9)
+	@DisplayName("Consultando usuário ativo por id")
 	public void consultarPorId() {
 		Usuario usuario = new Usuario(2l, "Ricardo Lima", "ricardo", "ricardo@gmail.com",
 				"$2a$10$A3BtshmFkCkcmWkDLfzA6OoS0xIEVPvc/rh2lbITuzoNqSFHjuizC");
-		Mockito.when(this.repository.findDistinctByIdAndAtivo(Mockito.anyLong(), Mockito.anyBoolean())).thenReturn(Optional.of(usuario));
+		Mockito.when(this.repository.findDistinctByIdAndAtivo(Mockito.anyLong(), Mockito.anyBoolean()))
+				.thenReturn(Optional.of(usuario));
 
 		UsuarioDTO dto = this.service.consultar(2l);
 
@@ -157,8 +182,11 @@ public class UsuarioServiceTest {
 	}
 
 	@Test
+	@Order(10)
+	@DisplayName("Falha ao consultar usuário, id inválido ou usuário inativo ")
 	public void erroAoConsultarPorId() {
-		Mockito.when(this.repository.findDistinctByIdAndAtivo(Mockito.anyLong(), Mockito.anyBoolean())).thenReturn(Optional.of(new Usuario()));
+		Mockito.when(this.repository.findDistinctByIdAndAtivo(Mockito.anyLong(), Mockito.anyBoolean()))
+				.thenReturn(Optional.of(new Usuario()));
 
 		try {
 			this.service.consultar(5l);
@@ -169,6 +197,8 @@ public class UsuarioServiceTest {
 	}
 
 	@Test
+	@Order(11)
+	@DisplayName("Consultando usuário ativo pelo login")
 	public void consultarPorLogin() {
 		Usuario usuario = new Usuario(2l, "Ricardo Lima", "ricardo", "ricardo@gmail.com",
 				"$2a$10$A3BtshmFkCkcmWkDLfzA6OoS0xIEVPvc/rh2lbITuzoNqSFHjuizC");
@@ -184,19 +214,18 @@ public class UsuarioServiceTest {
 	}
 
 	@Test
+	@Order(12)
+	@DisplayName("Falha ao consultar usuário, login inválido ou usuário inativo ")
 	public void erroAoConsultarPorLogin() {
 		Mockito.when(this.repository.findDistinctByLoginAndAtivo(Mockito.anyString(), Mockito.anyBoolean()))
 				.thenReturn(Optional.of(new Usuario()));
 
 		try {
-			this.service.consultarPorLogin("ricardo");
+			this.service.consultarPorLogin("ricardao");
 		} catch (Exception e) {
 			assertThat(EntityNotFoundException.class).isEqualTo(e.getClass());
 			assertThat("Login inválido").isEqualTo(e.getMessage());
 		}
 	}
-	
-	//public void al
-	
 
 }
