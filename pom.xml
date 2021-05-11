@@ -11,7 +11,7 @@
 	</parent>
 	<groupId>br.com</groupId>
 	<artifactId>api</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.3-SNAPSHOT</version>
 	<name>api</name>
 	<description>projeto base</description>
 	<properties>
@@ -75,6 +75,13 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+		
+		<!-- suporte para o banco de testes -->
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<scope>test</scope>
+		</dependency>
 
 		<!-- suporte ao swagger -->
 		<dependency>
@@ -97,6 +104,13 @@
 			<groupId>io.jsonwebtoken</groupId>
 			<artifactId>jjwt</artifactId>
 			<version>0.9.1</version>
+		</dependency>
+
+		<!-- suporte para gerar os arquivos de logs -->
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.17</version>
 		</dependency>
 
 	</dependencies>

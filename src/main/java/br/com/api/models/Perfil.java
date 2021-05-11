@@ -2,8 +2,6 @@ package br.com.api.models;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -13,8 +11,8 @@ import javax.persistence.Table;
 import org.hibernate.envers.Audited;
 import org.springframework.security.core.GrantedAuthority;
 
-import br.com.api.enums.PerfilEnum;
 import br.com.api.models.base.Pojo;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -22,19 +20,22 @@ import lombok.Setter;
 @Audited
 @Table(name = "perfis")
 @Getter @Setter
+@EqualsAndHashCode(callSuper = false)
 public class Perfil extends Pojo<Long> implements GrantedAuthority {
 
 	private static final long serialVersionUID = 1L;
+	
+	public static final String PERFIL_USUARIO = "USUARIO";
+	public static final String PERFIL_ADMIN = "ADMINISTRADOR";
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_pefil")
-	@SequenceGenerator(name = "seq_pefil", sequenceName = "seq_pefil", allocationSize = 1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_perfil")
+	@SequenceGenerator(name = "seq_perfil", sequenceName = "seq_perfil", allocationSize = 1)
 	@Column(name = "id")
 	private Long id;
 
-	@Enumerated(EnumType.STRING)
 	@Column(name = "nome", unique = true)
-	private PerfilEnum nome;
+	private String nome;
 
 	/**
 	 * Construtores
@@ -42,18 +43,18 @@ public class Perfil extends Pojo<Long> implements GrantedAuthority {
 	public Perfil() {
 	}
 
-	public Perfil(Long id, PerfilEnum nome) {
+	public Perfil(Long id, String nome) {
 		this.id = id;
 		this.nome = nome;
 	}
 
-	public Perfil(PerfilEnum nome) {
+	public Perfil(String nome) {
 		this.nome = nome;
 	}
-
+	
 	@Override
 	public String getAuthority() {
-		return nome.getDescricao();
+		return nome;
 	}
 
 }

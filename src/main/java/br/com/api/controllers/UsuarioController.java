@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.com.api.constants.UrlConstantes;
 import br.com.api.controllers.base.ControllerGenerico;
 import br.com.api.dtos.UsuarioDTO;
 import br.com.api.services.UsuarioService;
@@ -18,12 +19,12 @@ import io.swagger.annotations.Api;
 
 @RestController
 @Api(value = "Usuarios", description = "Endpoint dos usuarios", tags = "Usuarios")
-@RequestMapping("/api/usuarios")
+@RequestMapping(UrlConstantes.USUARIOS)
 public class UsuarioController extends ControllerGenerico<UsuarioDTO, Long>{
 	
 	@Autowired
 	private UsuarioService service;
-
+	
 	@Override
 	public UsuarioDTO atualizar(@PathVariable Long id, @RequestBody UsuarioDTO usuarioDTO) {
 		usuarioDTO.setId(id);
@@ -49,5 +50,4 @@ public class UsuarioController extends ControllerGenerico<UsuarioDTO, Long>{
 	public List<UsuarioDTO> listar() {
 		return service.consultarTodos();
 	}
-
 }

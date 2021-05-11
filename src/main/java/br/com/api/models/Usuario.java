@@ -18,13 +18,16 @@ import javax.persistence.Transient;
 import org.hibernate.envers.Audited;
 
 import br.com.api.models.base.Pojo;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
 @Entity
 @Audited
 @Table(name = "usuarios")
-@Getter @Setter
+@Getter
+@Setter
+@EqualsAndHashCode(callSuper = false)
 public class Usuario extends Pojo<Long> {
 
 	private static final long serialVersionUID = 1L;
@@ -40,7 +43,7 @@ public class Usuario extends Pojo<Long> {
 
 	@Column(name = "login", nullable = false, unique = true)
 	private String login;
-	
+
 	@Column(name = "email", nullable = false, unique = true)
 	private String email;
 
@@ -56,6 +59,29 @@ public class Usuario extends Pojo<Long> {
 	private String confirmacaoSenha; // Para cadastro e alteracao de senha
 
 	@Transient
-	private String novaSenha; // Para alteracao de senha	
+	private String novaSenha; // Para alteracao de senha
+
+	/**
+	 * Construtores
+	 */
+
+	public Usuario() {
+
+	}
+
+	public Usuario(String nome, String login, String email, String senha) {
+		this.nome = nome;
+		this.login = login;
+		this.email = email;
+		this.senha = senha;
+	}
+	
+	public Usuario(Long id, String nome, String login, String email, String senha) {
+		this.id = id;
+		this.nome = nome;
+		this.login = login;
+		this.email = email;
+		this.senha = senha;
+	}
 
 }
