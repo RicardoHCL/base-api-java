@@ -20,7 +20,7 @@ import org.springframework.stereotype.Service;
 
 import br.com.api.configs.security.UserDetailService;
 import br.com.api.constants.ExceptionsConstantes;
-import br.com.api.exceptions.AuthenticationJwtException;
+import br.com.api.exceptions.base.AuthenticationJwtException;
 import br.com.api.models.Perfil;
 import br.com.api.models.Usuario;
 import io.jsonwebtoken.Claims;

@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import br.com.api.exceptions.AuthenticationJwtException;
+import br.com.api.exceptions.base.AuthenticationJwtException;
 import br.com.api.exceptions.CustomException;
 import br.com.api.exceptions.ValidationException;
 import br.com.api.utils.DataUtils;

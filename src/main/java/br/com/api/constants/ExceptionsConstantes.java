@@ -27,5 +27,13 @@ public class ExceptionsConstantes {
 	public static final String PROIBIDO_ALTERAR_O_PROPRIO_PERFIL = "Não é permitido alterar o próprio perfil";
 	
 	public static final String USUARIO_SEM_PERMISSAO = "Você não tem permissão para esta operação";
+	
+	public static final String FALHA_AO_CRIAR_DIRETORIO = "Não foi possível criar o diretório para armazenar os arquivos";
+	
+	public static final String FALHA_AO_ARMAZENAR_ARQUIVO = "Falha ao armazenar o arquivo: {0} ";
+	
+	public static final String ARQUIVO_COM_NOME_INVALIDO = "O arquivo contém caracteres inválidos: {0}, favor renomea-lo ";
+	
+	public static final String ARQUIVO_NAO_ENCONTRADO = "Arquivo não encontrado: {0} ";
 
 }
