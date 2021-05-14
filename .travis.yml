@@ -1,0 +1,15 @@
+language: bash
+services: docker
+script:
+  - docker-compose build
+before_deploy:
+  - echo "${DOCKER_PASSWORD}" | docker login --username "${DOCKER_USERNAME}" --password-stdin
+deploy:
+  provider: script
+  script:
+    docker push zlimaa/postgres-projeto-base-api
+    docker push zlimaa/projeto-base-api
+  on:
+    branch: master
+notifications:
+  email: false

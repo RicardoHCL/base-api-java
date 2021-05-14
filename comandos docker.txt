@@ -1,0 +1,16 @@
+Entrar no diretorio onde tá o projeto e os arquivos docker-compose.yml e Dockerfile
+
+abrir o power shell como adm e rodar o comando:
+
+
+docker-compose build (builda todo os projetos, baixando as bibliotecas do maven, e o banco de dados presentes nos dois arquivos Dockerfile)
+docker-compose up (starta os projetos, tanto de banco quanto da aplicação)
+docker-compose down (derruba os projetos dá o stop)
+
+docker-compose up -d --build (builda e sobe os projetos sem bloquear o console, deixando livre pra rodar outros comandos)
+
+docker ps (mostra os status dos projetos, se tão rodando ou não)
+docker logs "hash do projeto" (mostra o log do projeto que pertence a hash)
+
+docker images (listas as imagens baixadas/criadas no docker local)
+docker login docker.io (fazer login na plataforma do docker para subir pro docker hub)
